@@ -1,0 +1,91 @@
+;
+; VirtualDbgHide.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Sample ; TODO: edit Class
+ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171} ; TODO: edit ClassGuid
+Provider=%ManufacturerName%
+CatalogFile=VirtualDbgHide.cat
+DriverVer= ; TODO: set DriverVer in stampinf property pages
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+; ================= Class section =====================
+
+[ClassInstall32]
+Addreg=SampleClassReg
+
+[SampleClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-5
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+VirtualDbgHide.sys  = 1,,
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%VirtualDbgHide.DeviceDesc%=VirtualDbgHide_Device, Root\VirtualDbgHide ; TODO: edit hw-id
+
+[VirtualDbgHide_Device.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+VirtualDbgHide.sys
+
+;-------------- Service installation
+[VirtualDbgHide_Device.NT.Services]
+AddService = VirtualDbgHide,%SPSVCINST_ASSOCSERVICE%, VirtualDbgHide_Service_Inst
+
+; -------------- TestDriver driver install sections
+[VirtualDbgHide_Service_Inst]
+DisplayName    = %VirtualDbgHide.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\VirtualDbgHide.sys
+LoadOrderGroup = Extended Base
+
+;
+;--- TestDriver_Device Coinstaller installation ------
+;
+
+[DestinationDirs]
+VirtualDbgHide_Device_CoInstaller_CopyFiles = 11
+
+[VirtualDbgHide_Device.NT.CoInstallers]
+AddReg=VirtualDbgHide_Device_CoInstaller_AddReg
+CopyFiles=VirtualDbgHide_Device_CoInstaller_CopyFiles
+
+[VirtualDbgHide_Device_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[VirtualDbgHide_Device_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[SourceDisksFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+[VirtualDbgHide_Device.NT.Wdf]
+KmdfService =  VirtualDbgHide, VirtualDbgHide_wdfsect
+[VirtualDbgHide_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="" ; TODO: add ManufacturerName
+ClassName="Samples" ; TODO: edit ClassName
+DiskName = "TestDriver Installation Disk"
+VirtualDbgHide.DeviceDesc = "TestDriver Device"
+VirtualDbgHide.SVCDESC = "TestDriver Service"
