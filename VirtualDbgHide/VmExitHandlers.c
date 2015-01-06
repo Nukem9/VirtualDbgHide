@@ -131,7 +131,7 @@ NTSTATUS NTAPI HandleInvd(PVIRT_CPU Cpu, ULONG InstructionLength)
 	//
 	// Invalidate internal caches
 	//
-	_Invd();
+	__invd();
 
 	Cpu->rip += InstructionLength;
 
@@ -278,7 +278,7 @@ NTSTATUS NTAPI HandleMsrRead(PVIRT_CPU Cpu, ULONG InstructionLength)
 	case MSR_GS_BASE:			msr.QuadPart = __readvmx(GUEST_GS_BASE);		break;
 	case MSR_FS_BASE:			msr.QuadPart = __readvmx(GUEST_FS_BASE);		break;
 
-	case MSR_LSTAR:				msr.QuadPart = NtSyscallHandler;DbgPrint("LSTAR - 0x%p\n", Cpu->rip);break;
+	//case MSR_LSTAR:				msr.QuadPart = NtSyscallHandler;DbgPrint("LSTAR - 0x%p\n", Cpu->rip);break;
 	// PG WIN8.1 scan at around 30 minutes after boot
 	// successfully bypassed
 

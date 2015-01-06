@@ -1,6 +1,6 @@
 #include "Driver.h"
 
-VmExitCallback VmExitCallbacks[VMX_MAX_GUEST_VMEXIT + 1] =
+VmExitCallback VmExitCallbacks[VMX_MAX_GUEST_VMEXIT] =
 {
 	HandleException,			// 0  EXIT_REASON_EXCEPTION_NMI
 	HandleUnimplemented,		// 1  EXIT_REASON_EXTERNAL_INTERRUPT
@@ -59,8 +59,14 @@ VmExitCallback VmExitCallbacks[VMX_MAX_GUEST_VMEXIT + 1] =
 	HandleUnimplemented,		// 54 EXIT_REASON_WBINVD
 	HandleXsetbv,				// 55 EXIT_REASON_XSETBV
 	HandleUnimplemented,		// 56 EXIT_REASON_APIC_WRITE
-	HandleUnimplemented,		// 57 ?
+	HandleUnimplemented,		// 57 EXIT_REASON_RDRAND
 	HandleUnimplemented,		// 58 EXIT_REASON_INVPCID
+	HandleUnimplemented,		// 59 EXIT_REASON_VMFUNC
+	HandleUnimplemented,		// 60 ?
+	HandleUnimplemented,		// 61 EXIT_REASON_RDSEED
+	HandleUnimplemented,		// 62 ?
+	HandleUnimplemented,		// 63 EXIT_REASON_XSAVES
+	HandleUnimplemented,		// 64 EXIT_REASON_XRSTORS
 };
 
 VOID HandleVmExit(PVIRT_CPU Cpu, PGUEST_REGS GuestRegs)

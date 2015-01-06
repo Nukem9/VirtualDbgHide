@@ -178,7 +178,7 @@ typedef enum SEGREGS
 #define MSR_IA32_FEATURE_CONTROL 		0x03a
 #define MSR_IA32_VMX_PINBASED_CTLS		0x481
 #define MSR_IA32_VMX_PROCBASED_CTLS		0x482
-#define MSR_IA32_VMX_PROCBASED_CTLS2	0x0000048b
+#define MSR_IA32_VMX_PROCBASED_CTLS2	0x48b
 #define MSR_IA32_VMX_EXIT_CTLS		0x483
 #define MSR_IA32_VMX_ENTRY_CTLS		0x484
 
@@ -473,8 +473,6 @@ NTSTATUS _StartVirtualization();
 VOID _StopVirtualization();
 VOID _GuestExit();
 
-VOID _Invd();
-
-VOID _InvalidatePage(ULONG64 Page);
+VOID __invd();
 
 #endif

@@ -234,14 +234,9 @@ _ExitHandler PROC
 
 _ExitHandler ENDP
 
-_Invd PROC
+__invd PROC
     invd
     ret
-_Invd ENDP
-
-_InvalidatePage PROC
-    invlpg [rcx]
-    ret
-_InvalidatePage ENDP
+__invd ENDP
 
 END
