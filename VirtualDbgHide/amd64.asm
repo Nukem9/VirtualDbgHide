@@ -11,14 +11,6 @@ _VmxOff PROC
     ret
 _VmxOff ENDP
 
-_TSC PROC
-;	rdtscp
-	rdtsc
-	shl		rdx, 32
-	or		rax, rdx
-	ret
-_TSC ENDP
-
 _Rax PROC
 	mov		rax, rax
 	ret
@@ -122,26 +114,6 @@ _TrSelector PROC
 	str	rax
 	ret
 _TrSelector ENDP
-
-_VmFailInvalid PROC
-    pushfq
-    pop rax
-    xor rcx, rcx
-    bt eax, 0 ; RFLAGS.CF
-    adc cl, cl
-    mov rax, rcx
-    ret
-_VmFailInvalid ENDP
-
-_VmFailValid PROC
-    pushfq
-    pop rax
-    xor rcx, rcx
-    bt eax, 6 ; RFLAGS.ZF
-    adc cl, cl
-    mov rax, rcx
-    ret
-_VmFailValid ENDP    
 
 _StartVirtualization PROC
     ;int 3

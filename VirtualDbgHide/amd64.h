@@ -455,8 +455,6 @@ USHORT _TrSelector();
 ULONG64 _Rbx();
 ULONG64 _Rax();
 
-ULONG64 _TSC();
-
 FORCEINLINE size_t __readvmx(ULONG Type)
 {
 	size_t val = 0;
@@ -466,9 +464,6 @@ FORCEINLINE size_t __readvmx(ULONG Type)
 }
 
 VOID _VmxOff(ULONG64 Rip, ULONG64 Rsp);
-
-ULONG32 _VmFailValid();
-ULONG32 _VmFailInvalid();
 
 VOID _GuestEntryPoint();
 VOID _ExitHandler();
