@@ -135,3 +135,12 @@ NTSTATUS AllocateVmxProcessorData(PVOID *VirtualAddress, PHYSICAL_ADDRESS *Physi
 
 	return STATUS_SUCCESS;
 }
+
+NTSTATUS FreeVmxProcessorData(PVOID VirtualAddress)
+{
+	if (!VirtualAddress)
+		return STATUS_INVALID_PARAMETER;
+
+	MmFreeContiguousMemory(VirtualAddress);
+	return STATUS_SUCCESS;
+}
