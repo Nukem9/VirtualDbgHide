@@ -1,4 +1,4 @@
-#include "Driver.h"
+#include "stdafx.h"
 
 VOID VmInjectInterrupt(ULONG InterruptType, ULONG Vector, ULONG WriteLength)
 {

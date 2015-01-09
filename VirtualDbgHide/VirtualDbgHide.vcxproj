@@ -51,30 +51,31 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ControlArea.c" />
-    <ClCompile Include="Cpu.c" />
+    <ClCompile Include="VM\ControlArea.c" />
+    <ClCompile Include="VM\Cpu.c" />
     <ClCompile Include="Driver.c" />
-    <ClCompile Include="Misc.c" />
+    <ClCompile Include="VM\Misc.c" />
     <ClCompile Include="Syscall.c" />
-    <ClCompile Include="virtdbg.c" />
-    <ClCompile Include="VmExitHandlers.c" />
-    <ClCompile Include="VmExit.c" />
-    <ClCompile Include="VmInterrupt.c" />
-    <ClCompile Include="VTx.c" />
+    <ClCompile Include="VM\Vm.c" />
+    <ClCompile Include="VM\VmExitHandlers.c" />
+    <ClCompile Include="VM\VmExit.c" />
+    <ClCompile Include="VM\VmInterrupt.c" />
+    <ClCompile Include="VM\VTx.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="amd64.h" />
-    <ClInclude Include="ControlArea.h" />
-    <ClInclude Include="Cpu.h" />
+    <ClInclude Include="VM\amd64.h" />
+    <ClInclude Include="VM\ControlArea.h" />
+    <ClInclude Include="VM\Cpu.h" />
     <ClInclude Include="Driver.h" />
-    <ClInclude Include="Misc.h" />
+    <ClInclude Include="VM\Misc.h" />
     <ClInclude Include="Syscall.h" />
-    <ClInclude Include="virtdbg.h" />
-    <ClInclude Include="VmExit.h" />
-    <ClInclude Include="VmExitHandlers.h" />
-    <ClInclude Include="VmInterrupt.h" />
-    <ClInclude Include="vmx.h" />
-    <ClInclude Include="VTx.h" />
+    <ClInclude Include="VM\stdafx.h" />
+    <ClInclude Include="VM\Vm.h" />
+    <ClInclude Include="VM\VmExit.h" />
+    <ClInclude Include="VM\VmExitHandlers.h" />
+    <ClInclude Include="VM\VmInterrupt.h" />
+    <ClInclude Include="VM\vmx.h" />
+    <ClInclude Include="VM\VTx.h" />
   </ItemGroup>
   <ItemGroup>
     <Inf Include="VirtualDbgHide.inf" />
@@ -310,7 +311,7 @@
     <FilesToPackage Include="@(Inf->'%(CopyOutput)')" Condition="'@(Inf)'!=''" />
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="amd64.asm">
+    <MASM Include="VM\amd64.asm">
       <FileType>Document</FileType>
       <EnableMASM51Compatibility Condition="'$(Configuration)|$(Platform)'=='Win7 Release|x64'">false</EnableMASM51Compatibility>
     </MASM>

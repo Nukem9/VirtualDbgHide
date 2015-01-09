@@ -1,4 +1,4 @@
-#include "Driver.h"
+#include "stdafx.h"
 
 NTSTATUS InitializeSegmentSelector(PSEGMENT_SELECTOR SegmentSelector, USHORT Selector, PUCHAR GdtBase)
 {

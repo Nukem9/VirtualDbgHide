@@ -1,4 +1,4 @@
-#include "Driver.h"
+#include "stdafx.h"
 
 VmExitCallback VmExitCallbacks[VMX_MAX_GUEST_VMEXIT] =
 {

@@ -5,9 +5,9 @@ ULONG64 NtKernelBase;
 ULONG64 GuestSyscallHandler;
 
 // 1 = Hook, 0 = Disabled
-volatile UCHAR SyscallHookEnabled[4096];
-volatile UCHAR SyscallParamTable[4096];
-volatile PVOID SyscallPointerTable[4096];
+UCHAR SyscallHookEnabled[4096];
+UCHAR SyscallParamTable[4096];
+PVOID SyscallPointerTable[4096];
 
 #define IMAGE_DOS_SIGNATURE 0x5a4d
 
@@ -40,16 +40,6 @@ DECLSPEC_NOINLINE NTSTATUS NTAPI hk_NtReadVirtualMemory(HANDLE ProcessHandle, PV
 
 	if (numCalls % 1000 == 0)
 		DbgLog("NtReadVirtualMemory - 0x%p 0x%p 0x%p 0x%p 0x%p\n", ProcessHandle, BaseAddress, Buffer, NumberOfBytesToRead, NumberOfBytesRead);
-	/*
-	__try
-	{
-		memset(Buffer, 0x90, NumberOfBytesToRead);
-	}
-	__except (EXCEPTION_EXECUTE_HANDLER)
-	{
-		return GetExceptionCode();
-	}
-	*/
 
 	return NtReadVirtualMemory(ProcessHandle, BaseAddress, Buffer, NumberOfBytesToRead, NumberOfBytesRead);
 }

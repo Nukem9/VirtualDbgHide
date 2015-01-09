@@ -1,6 +1,6 @@
-#include "Driver.h"
+#include "stdafx.h"
 
-VOID VirtDbgStart(PVOID StartContext)
+VOID VmStart(PVOID StartContext)
 {
 	UNREFERENCED_PARAMETER(StartContext);
 
@@ -45,8 +45,6 @@ VOID VirtDbgStart(PVOID StartContext)
 		return;
 	}
 
-	QueryNtServiceCall();
-
 	//
 	// Start virtualization
 	//
@@ -76,7 +74,7 @@ NTSTATUS StartVirtualization(PVOID GuestRsp)
 
 	if (!NT_SUCCESS(status))
 	{
-		DbgLog("Failed InitializeProcessorControlArea 0x%x\n", status);
+		DbgLog("Failed ControlAreaInitializeProcessor 0x%x\n", status);
 		return status;
 	}
 

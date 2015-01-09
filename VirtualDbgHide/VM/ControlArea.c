@@ -1,4 +1,4 @@
-#include "Driver.h"
+#include "stdafx.h"
 
 LONG		CpuControlAreaCount;
 LONG		CpuControlAreaSize;

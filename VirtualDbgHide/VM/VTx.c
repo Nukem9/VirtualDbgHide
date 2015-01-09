@@ -1,4 +1,4 @@
-#include "Driver.h"
+#include "stdafx.h"
 
 NTSTATUS VTxEnableProcessors(LONG ProcessorCount)
 {

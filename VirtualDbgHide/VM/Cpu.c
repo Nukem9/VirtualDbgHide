@@ -1,4 +1,4 @@
-#include "Driver.h"
+#include "stdafx.h"
 
 VOID CpuDumpRegisters(PVIRT_CPU Cpu)
 {
@@ -238,6 +238,7 @@ VOID CpuSetupVMCS(PVIRT_CPU Cpu, PVOID GuestRsp)
 	__vmx_vmwrite(CR3_TARGET_VALUE3, 0);
 }
 
+extern ULONG64 GuestSyscallHandler;
 NTSTATUS Virtualize(PVIRT_CPU pCpu)
 {
 	DbgLog("CPU: 0x%p\n", pCpu);
@@ -248,7 +249,7 @@ NTSTATUS Virtualize(PVIRT_CPU pCpu)
 	switch (__vmx_vmlaunch())
 	{
 	case 0:
-		// The operation succeeded.
+		// The operation succeeded. Never reaches this.
 		__debugbreak();
 		break;
 
@@ -263,5 +264,6 @@ NTSTATUS Virtualize(PVIRT_CPU pCpu)
 		return STATUS_UNSUCCESSFUL;
 	}
 
-	return STATUS_SUCCESS;
+	// Execution will never reach here
+	__assume(0);
 }

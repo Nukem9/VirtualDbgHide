@@ -23,77 +23,80 @@
     <ClInclude Include="Driver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="amd64.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="virtdbg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="vmx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VTx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ControlArea.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Cpu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Misc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Syscall.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VmExitHandlers.h">
+    <ClInclude Include="VM\amd64.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VmExit.h">
+    <ClInclude Include="VM\ControlArea.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VmInterrupt.h">
+    <ClInclude Include="VM\Cpu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VM\Misc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VM\VmExit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VM\VmExitHandlers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VM\VmInterrupt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VM\vmx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VM\VTx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VM\Vm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VM\stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="virtdbg.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Driver.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="VTx.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ControlArea.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Cpu.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Misc.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Syscall.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VmExit.c">
+    <ClCompile Include="VM\ControlArea.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VmExitHandlers.c">
+    <ClCompile Include="VM\Cpu.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VmInterrupt.c">
+    <ClCompile Include="VM\Misc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VM\VmExit.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VM\VmExitHandlers.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VM\VmInterrupt.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VM\VTx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VM\Vm.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="amd64.asm">
+    <MASM Include="syscall64.asm">
       <Filter>Source Files</Filter>
     </MASM>
-    <MASM Include="syscall64.asm">
+    <MASM Include="VM\amd64.asm">
       <Filter>Source Files</Filter>
     </MASM>
   </ItemGroup>

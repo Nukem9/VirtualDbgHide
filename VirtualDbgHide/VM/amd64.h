@@ -10,8 +10,6 @@
 #pragma warning(disable: 4201)// nonstandard extension used : nameless struct/union
 #pragma warning(disable: 4214)// nonstandard extension used : bit field types other than int
 
-#include <ntddk.h>
-
 #define KGDT64_NULL (0 * 16)    // NULL descriptor
 #define KGDT64_R0_CODE (1 * 16) // kernel mode 64-bit code
 #define KGDT64_R0_DATA (1 * 16) + 8     // kernel mode 64-bit data (stack)
