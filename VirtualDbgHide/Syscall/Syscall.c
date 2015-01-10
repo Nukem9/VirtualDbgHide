@@ -5,8 +5,8 @@ ULONG64 NtKernelBase;
 ULONG64 GuestSyscallHandler;
 
 // 1 = Hook, 0 = Disabled
-UCHAR SyscallHookEnabled[4096];
-UCHAR SyscallParamTable[4096];
+CHAR SyscallHookEnabled[4096];
+CHAR SyscallParamTable[4096];
 PVOID SyscallPointerTable[4096];
 
 #define IMAGE_DOS_SIGNATURE 0x5a4d
@@ -48,15 +48,25 @@ VOID SyscallEntryPoint();
 
 NTSTATUS AddNtServiceCallHook(ULONG Index, UCHAR ParameterCount, PVOID Function)
 {
-	if (Index > ARRAYSIZE(SyscallHookEnabled))
+	if (Index >= ARRAYSIZE(SyscallHookEnabled))
 		return STATUS_INVALID_PARAMETER_1;
 
 	if (ParameterCount > 15)
 		return STATUS_INVALID_PARAMETER_2;
 
-	SyscallHookEnabled[Index]	= 1;
+	//
+	// If the syscall hook is enabled, disable it immediately
+	//
+	InterlockedExchange8(&SyscallHookEnabled[Index], 0);
+
 	SyscallParamTable[Index]	= ParameterCount;
 	SyscallPointerTable[Index]	= Function;
+
+	//
+	// If the function is valid, re-enable it
+	//
+	if (Function)
+		InterlockedExchange8(&SyscallHookEnabled[Index], 1);
 
 	return STATUS_SUCCESS;
 }

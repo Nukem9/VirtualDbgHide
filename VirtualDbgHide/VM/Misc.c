@@ -2,9 +2,6 @@
 
 NTSTATUS InitializeSegmentSelector(PSEGMENT_SELECTOR SegmentSelector, USHORT Selector, PUCHAR GdtBase)
 {
-	PSEGMENT_DESCRIPTOR SegDesc;
-	ULONG64 tmp;
-
 	if (!SegmentSelector)
 		return STATUS_INVALID_PARAMETER;
 
@@ -14,7 +11,7 @@ NTSTATUS InitializeSegmentSelector(PSEGMENT_SELECTOR SegmentSelector, USHORT Sel
 		return STATUS_INVALID_PARAMETER;
 	}
 
-	SegDesc = (PSEGMENT_DESCRIPTOR)((PUCHAR)GdtBase + (Selector & ~0x7));
+	PSEGMENT_DESCRIPTOR SegDesc = (PSEGMENT_DESCRIPTOR)((PUCHAR)GdtBase + (Selector & ~0x7));
 
 	SegmentSelector->sel = Selector;
 	SegmentSelector->base = SegDesc->base0 | SegDesc->base1 << 16 | SegDesc->base2 << 24;
@@ -24,7 +21,7 @@ NTSTATUS InitializeSegmentSelector(PSEGMENT_SELECTOR SegmentSelector, USHORT Sel
 	if (!(SegDesc->attr0 & LA_STANDARD))
 	{
 		// this is a TSS or callgate etc, save the base high part
-		tmp = (*(PULONG64)((PUCHAR)SegDesc + 8));
+		ULONG64 tmp = (*(PULONG64)((PUCHAR)SegDesc + 8));
 		SegmentSelector->base = (SegmentSelector->base & 0xffffffff) | (tmp << 32);
 	}
 
