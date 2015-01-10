@@ -2,7 +2,7 @@
 
 #include <ntifs.h>
 #include "VM/stdafx.h"
-#include "Syscall.h"
+#include "Syscall/stdafx.h"
 
 NTSTATUS DriverEntry(PDRIVER_OBJECT DriverObject, PUNICODE_STRING RegistryPath);
 VOID DriverUnload(PDRIVER_OBJECT DriverObject);

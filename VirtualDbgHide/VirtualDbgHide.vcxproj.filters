@@ -23,9 +23,6 @@
     <ClInclude Include="Driver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Syscall.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="VM\amd64.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -59,12 +56,15 @@
     <ClInclude Include="VM\stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Syscall\Syscall.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Syscall\stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Driver.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Syscall.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="VM\ControlArea.c">
@@ -91,12 +91,15 @@
     <ClCompile Include="VM\Vm.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Syscall\Syscall.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="syscall64.asm">
+    <MASM Include="VM\amd64.asm">
       <Filter>Source Files</Filter>
     </MASM>
-    <MASM Include="VM\amd64.asm">
+    <MASM Include="Syscall\syscall64.asm">
       <Filter>Source Files</Filter>
     </MASM>
   </ItemGroup>

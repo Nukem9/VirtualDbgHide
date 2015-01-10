@@ -55,7 +55,7 @@
     <ClCompile Include="VM\Cpu.c" />
     <ClCompile Include="Driver.c" />
     <ClCompile Include="VM\Misc.c" />
-    <ClCompile Include="Syscall.c" />
+    <ClCompile Include="Syscall\Syscall.c" />
     <ClCompile Include="VM\Vm.c" />
     <ClCompile Include="VM\VmExitHandlers.c" />
     <ClCompile Include="VM\VmExit.c" />
@@ -63,12 +63,13 @@
     <ClCompile Include="VM\VTx.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Syscall\stdafx.h" />
     <ClInclude Include="VM\amd64.h" />
     <ClInclude Include="VM\ControlArea.h" />
     <ClInclude Include="VM\Cpu.h" />
     <ClInclude Include="Driver.h" />
     <ClInclude Include="VM\Misc.h" />
-    <ClInclude Include="Syscall.h" />
+    <ClInclude Include="Syscall\Syscall.h" />
     <ClInclude Include="VM\stdafx.h" />
     <ClInclude Include="VM\Vm.h" />
     <ClInclude Include="VM\VmExit.h" />
@@ -315,7 +316,7 @@
       <FileType>Document</FileType>
       <EnableMASM51Compatibility Condition="'$(Configuration)|$(Platform)'=='Win7 Release|x64'">false</EnableMASM51Compatibility>
     </MASM>
-    <MASM Include="syscall64.asm" />
+    <MASM Include="Syscall\syscall64.asm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
