@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IoControl.c" />
+    <ClCompile Include="Syscall\SSDT.c" />
     <ClCompile Include="Syscall\Syscalls.c" />
     <ClCompile Include="VM\ControlArea.c" />
     <ClCompile Include="VM\Cpu.c" />
@@ -65,6 +66,7 @@
     <ClCompile Include="VM\VTx.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Syscall\SSDT.h" />
     <ClInclude Include="Syscall\stdafx.h" />
     <ClInclude Include="Syscall\Syscalls.h" />
     <ClInclude Include="VM\amd64.h" />

@@ -17,4 +17,7 @@ typedef struct _SYSCALL_HOOK_INFO
 extern ULONG64 NtSyscallHandler;
 extern ULONG64 GuestSyscallHandler;
 
+extern ULONG64 NtKernelBase;
+extern ULONG64 NtKernelSSDT;
+
 VOID QueryNtServiceCall();

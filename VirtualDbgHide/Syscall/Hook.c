@@ -1,34 +1,16 @@
 #include "Driver.h"
 
 ULONG64 NtSyscallHandler;
-ULONG64 NtKernelBase;
 ULONG64 GuestSyscallHandler;
+
+ULONG64 NtKernelBase;
+ULONG64 NtKernelSSDT;
 
 // 1 = Hook, 0 = Disabled
 CHAR SyscallHookEnabled[4096];
 CHAR SyscallParamTable[4096];
 PVOID SyscallPointerTable[4096];
 
-#define IMAGE_DOS_SIGNATURE 0x5a4d
-
-ULONG_PTR FindNtoskrnlBase(ULONG_PTR Addr)
-{
-	// Scan down from a given symbol’s address
-	Addr = (Addr & ~0xfff);
-
-	__try
-	{
-		while ((*(USHORT *)Addr != IMAGE_DOS_SIGNATURE))
-			Addr -= PAGE_SIZE;
-
-		return Addr;
-	}
-	__except (EXCEPTION_EXECUTE_HANDLER)
-	{
-	}
-
-	return 0;
-}
 VOID SyscallEntryPoint();
 
 NTSTATUS AddNtServiceCallHook(ULONG Index, UCHAR ParameterCount, PVOID Function)
@@ -56,19 +38,34 @@ NTSTATUS AddNtServiceCallHook(ULONG Index, UCHAR ParameterCount, PVOID Function)
 	return STATUS_SUCCESS;
 }
 
+NTSTATUS RemoveNtServiceCallHook(ULONG Index)
+{
+	return AddNtServiceCallHook(Index, 0, NULL);
+}
+
 VOID QueryNtServiceCall()
 {
+	//
+	// Query NTOSKRNL base offsets
+	//
+	NtKernelBase = GetNtoskrnlBase();
+	NtKernelSSDT = GetSSDTBase();
+
+	DbgLog("NtOSBase: 0x%llx\n", NtKernelBase);
+	DbgLog("NtSSDT: 0x%llx\n", NtKernelSSDT);
+
+	//
+	// System call handler
+	//
 	NtSyscallHandler	= (ULONG64)__readmsr(MSR_LSTAR);
 	GuestSyscallHandler = (ULONG64)&SyscallEntryPoint;
 
-	NtKernelBase = FindNtoskrnlBase(NtSyscallHandler);
-	DbgLog("NtOSBase: 0x%llx\n", NtKernelBase);
-
-//	*(ULONG_PTR *)&NtReadVirtualMemory = (ULONG_PTR)NtKernelBase + 0x3D0AF4;
-
+	//
+	// Zero out information tables
+	//
 	RtlSecureZeroMemory(SyscallHookEnabled, sizeof(SyscallHookEnabled));
 	RtlSecureZeroMemory(SyscallParamTable, sizeof(SyscallParamTable));
 	RtlSecureZeroMemory(SyscallPointerTable, sizeof(SyscallPointerTable));
 
-	AddNtServiceCallHook(0x3E, 5, (PVOID)&hk_NtReadVirtualMemory);
+//	AddNtServiceCallHook(0x3E, 5, (PVOID)&hk_NtReadVirtualMemory);
 }

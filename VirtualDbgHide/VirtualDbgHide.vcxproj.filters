@@ -65,10 +65,10 @@
     <ClInclude Include="Syscall\Syscalls.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VM\amd64vm.asm">
+    <ClInclude Include="VM\amd64vm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VM\amd64vm.h">
+    <ClInclude Include="Syscall\SSDT.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -109,12 +109,18 @@
     <ClCompile Include="Syscall\Syscalls.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Syscall\SSDT.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <MASM Include="VM\amd64.asm">
       <Filter>Source Files</Filter>
     </MASM>
     <MASM Include="Syscall\syscall64.asm">
+      <Filter>Source Files</Filter>
+    </MASM>
+    <MASM Include="VM\amd64vm.asm">
       <Filter>Source Files</Filter>
     </MASM>
   </ItemGroup>
