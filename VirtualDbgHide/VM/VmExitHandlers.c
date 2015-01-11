@@ -67,7 +67,7 @@ NTSTATUS NTAPI HandleException(PVIRT_CPU Cpu, ULONG InstructionLength)
 			// INT1
 			//
 			DbgLog("vmx: int1 rip = 0x%llx\n", Cpu->rip);
-			VmInjectInterrupt(pEvent->InterruptionType, pEvent->Vector, 0);
+			VmInjectInterrupt(pEvent->InterruptionType, pEvent->Vector, InstructionLength);
 			break;
 
 		case VECTOR_INVALID_OPCODE_EXCEPTION:
@@ -76,7 +76,7 @@ NTSTATUS NTAPI HandleException(PVIRT_CPU Cpu, ULONG InstructionLength)
 			//
 			DbgLog("vmx: Invalid opcode rip = 0x%llx\n", Cpu->rip);
 			
-			VmInjectInterrupt(pEvent->InterruptionType, pEvent->Vector, 1);
+			VmInjectInterrupt(pEvent->InterruptionType, pEvent->Vector, InstructionLength);
 			break;
 
 		case VECTOR_PAGE_FAULT_EXCEPTION:
@@ -87,7 +87,7 @@ NTSTATUS NTAPI HandleException(PVIRT_CPU Cpu, ULONG InstructionLength)
 
 			__writecr2(ExitQualification);
 			//__vmx_vmwrite(VM_ENTRY_EXCEPTION_ERROR_CODE, ErrorCode);
-			VmInjectInterrupt(pEvent->InterruptionType, pEvent->Vector, 0);
+			VmInjectInterrupt(pEvent->InterruptionType, pEvent->Vector, InstructionLength);
 			break;
 
 		default:
@@ -106,7 +106,7 @@ NTSTATUS NTAPI HandleException(PVIRT_CPU Cpu, ULONG InstructionLength)
 			//
 			DbgLog("vmx: int3 rip = 0x%llx\n", Cpu->rip);
 
-			VmInjectInterrupt(INTERRUPT_SOFTWARE_EXCEPTION, VECTOR_BREAKPOINT_EXCEPTION, 1);
+			VmInjectInterrupt(INTERRUPT_SOFTWARE_EXCEPTION, VECTOR_BREAKPOINT_EXCEPTION, InstructionLength);
 			break;
 
 		case VECTOR_OVERFLOW_EXCEPTION:
@@ -126,8 +126,6 @@ NTSTATUS NTAPI HandleException(PVIRT_CPU Cpu, ULONG InstructionLength)
 
 NTSTATUS NTAPI HandleInvd(PVIRT_CPU Cpu, ULONG InstructionLength)
 {
-	DbgLog("vmx: invd\n");
-
 	//
 	// Invalidate internal caches
 	//
@@ -176,8 +174,31 @@ NTSTATUS NTAPI HandleRdtsc(PVIRT_CPU Cpu, ULONG InstructionLength)
 
 NTSTATUS NTAPI HandleVmCall(PVIRT_CPU Cpu, ULONG InstructionLength)
 {
-	DbgLog("VmCall: rip = 0x%llx\n", Cpu->rip);
+	DbgLog("VMCALL: RIP = 0x%llx\n", Cpu->rip);
 
+	if (Cpu->rcx == 0x5644626748696465)
+	{
+		switch ((ULONG)Cpu->rax)
+		{
+		case 0:
+		{
+			// QueryVirtualization (Active)
+			Cpu->rax = TRUE;
+		}
+		break;
+
+		case 0xFFFFFFFF:
+		{
+			// StopVirtualization
+			__debugbreak();
+		}
+		break;
+		}
+
+		Cpu->rip += InstructionLength;
+	}
+
+	/*
 	if ((Cpu->rax == 0x42424242) && (Cpu->rbx == 0x43434343))
 	{
 		DbgLog("got magic sequence, terminating\n");
@@ -191,13 +212,14 @@ NTSTATUS NTAPI HandleVmCall(PVIRT_CPU Cpu, ULONG InstructionLength)
 
 		return STATUS_SUCCESS;
 	}
+	*/
 
 	//
-	// Call wasn't implemented
+	// Raise exception and act like the instruction doesn't exist
 	//
-	Cpu->rip += InstructionLength;
+	VmInjectInterrupt(INTERRUPT_HARDWARE_EXCEPTION, VECTOR_INVALID_OPCODE_EXCEPTION, InstructionLength);
 
-	return STATUS_NOT_IMPLEMENTED;
+	return STATUS_SUCCESS;
 }
 
 NTSTATUS NTAPI HandleVmInstruction(PVIRT_CPU Cpu, ULONG InstructionLength)

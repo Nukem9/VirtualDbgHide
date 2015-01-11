@@ -68,7 +68,9 @@
     <ClInclude Include="Syscall\stdafx.h" />
     <ClInclude Include="Syscall\Syscalls.h" />
     <ClInclude Include="VM\amd64.h" />
-    <ClInclude Include="VM\amd64vm.asm" />
+    <MASM Include="VM\amd64vm.asm">
+      <FileType>CppHeader</FileType>
+    </MASM>
     <ClInclude Include="VM\amd64vm.h" />
     <ClInclude Include="VM\ControlArea.h" />
     <ClInclude Include="VM\Cpu.h" />

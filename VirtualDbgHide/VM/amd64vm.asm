@@ -2,7 +2,7 @@
 EXTERN StartVirtualization:PROC
 EXTERN HandleVmExit:PROC
 
-VMCALL_MAGIC_VALUE = 0x5669727475616C44
+VMCALL_MAGIC_VALUE = 05644626748696465h
 
 .CODE
 
@@ -30,13 +30,13 @@ _StartVirtualization ENDP
 
 _StopVirtualization PROC
 	mov rcx, VMCALL_MAGIC_VALUE
-	mov eax, 0xFFFFFFFF
+	mov eax, 0FFFFFFFFh
     vmcall
 _StopVirtualization ENDP    
 
 _QueryVirtualization PROC
 	mov rcx, VMCALL_MAGIC_VALUE
-	mov eax, 0
+	mov eax, 0h
 	vmcall
 _QueryVirtualization ENDP
 
