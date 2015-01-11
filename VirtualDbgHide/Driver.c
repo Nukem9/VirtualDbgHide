@@ -58,32 +58,3 @@ VOID DriverUnload(PDRIVER_OBJECT DriverObject)
 	IoDeleteSymbolicLink(&usDosDeviceName);
 	IoDeleteDevice(DriverObject->DeviceObject);
 }
-
-NTSTATUS DispatchIoControl(PDEVICE_OBJECT DeviceObject, PIRP Irp)
-{
-	UNREFERENCED_PARAMETER(DeviceObject);
-
-	NTSTATUS status				= STATUS_SUCCESS;
-	PIO_STACK_LOCATION ioStack	= IoGetCurrentIrpStackLocation(Irp);
-
-	//
-	// Check if MajorFunction was for DeviceIoControl
-	//
-	if (ioStack->MajorFunction == IRP_MJ_DEVICE_CONTROL)
-	{
-		ULONG controlCode = ioStack->Parameters.DeviceIoControl.IoControlCode;
-
-		switch (controlCode)
-		{
-
-		}
-	}
-
-	//
-	// Complete the request, but don't boost priority
-	//
-	Irp->IoStatus.Status = status;
-	IoCompleteRequest(Irp, IO_NO_INCREMENT);
-
-	return status;
-}

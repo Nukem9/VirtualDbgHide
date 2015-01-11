@@ -57,7 +57,7 @@ NTSTATUS AddNtServiceCallHook(ULONG Index, UCHAR ParameterCount, PVOID Function)
 	//
 	// If the syscall hook is enabled, disable it immediately
 	//
-	InterlockedExchange8(&SyscallHookEnabled[Index], 0);
+	InterlockedExchange8(&SyscallHookEnabled[Index], FALSE);
 
 	SyscallParamTable[Index]	= ParameterCount;
 	SyscallPointerTable[Index]	= Function;
@@ -66,7 +66,7 @@ NTSTATUS AddNtServiceCallHook(ULONG Index, UCHAR ParameterCount, PVOID Function)
 	// If the function is valid, re-enable it
 	//
 	if (Function)
-		InterlockedExchange8(&SyscallHookEnabled[Index], 1);
+		InterlockedExchange8(&SyscallHookEnabled[Index], TRUE);
 
 	return STATUS_SUCCESS;
 }
