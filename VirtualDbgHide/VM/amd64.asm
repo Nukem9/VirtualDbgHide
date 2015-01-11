@@ -1,16 +1,6 @@
 
 .CODE
 
-_Rax PROC
-	mov		rax, rax
-	ret
-_Rax ENDP
-
-_Rbx PROC
-	mov		rax, rbx
-	ret
-_Rbx ENDP
-
 _Cs PROC
 	mov		rax, cs
 	ret
@@ -94,11 +84,6 @@ _TrSelector PROC
 	str	rax
 	ret
 _TrSelector ENDP
-
-__readcr2 PROC
-	mov rax, cr2
-	ret
-__readcr2 ENDP
 
 __writecr2 PROC
     mov cr2, rcx

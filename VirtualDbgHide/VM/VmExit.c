@@ -17,7 +17,7 @@ VmExitCallback VmExitCallbacks[VMX_MAX_GUEST_VMEXIT] =
 	HandleUnimplemented,		// 12 EXIT_REASON_HLT
 	HandleInvd,					// 13 EXIT_REASON_INVD
 	HandleUnimplemented,		// 14 EXIT_REASON_INVLPG
-	HandleUnimplemented,		// 15 EXIT_REASON_RDPMC
+	HandleRdpmc,				// 15 EXIT_REASON_RDPMC
 	HandleRdtsc,				// 16 EXIT_REASON_RDTSC
 	HandleUnimplemented,		// 17 EXIT_REASON_RSM
 	HandleVmCall,				// 18 EXIT_REASON_VMCALL

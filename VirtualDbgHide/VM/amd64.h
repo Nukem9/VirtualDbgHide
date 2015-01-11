@@ -448,9 +448,6 @@ USHORT _Ldtr();
 
 USHORT _TrSelector();
 
-ULONG64 _Rbx();
-ULONG64 _Rax();
-
 FORCEINLINE size_t __readvmx(ULONG Type)
 {
 	size_t val = 0;
@@ -459,7 +456,6 @@ FORCEINLINE size_t __readvmx(ULONG Type)
 	return val;
 }
 
-unsigned __int64 __readcr2();
 VOID __writecr2(unsigned __int64 Data);
 
 VOID __invd();

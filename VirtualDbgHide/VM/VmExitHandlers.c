@@ -138,6 +138,24 @@ NTSTATUS NTAPI HandleInvd(PVIRT_CPU Cpu, ULONG InstructionLength)
 	return STATUS_SUCCESS;
 }
 
+NTSTATUS NTAPI HandleRdpmc(PVIRT_CPU Cpu, ULONG InstructionLength)
+{
+	//
+	// Read Performance Monitor Counter
+	//
+	LARGE_INTEGER pmc;
+	pmc.QuadPart = __readpmc((ULONG)Cpu->rcx);
+
+	//
+	// Update registers
+	//
+	Cpu->rax = pmc.LowPart;
+	Cpu->rdx = pmc.HighPart;
+	Cpu->rip += InstructionLength;
+
+	return STATUS_SUCCESS;
+}
+
 NTSTATUS NTAPI HandleRdtsc(PVIRT_CPU Cpu, ULONG InstructionLength)
 {
 	//

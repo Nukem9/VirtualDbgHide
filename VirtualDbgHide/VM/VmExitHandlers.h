@@ -4,6 +4,7 @@ NTSTATUS NTAPI HandleUnimplemented(PVIRT_CPU Cpu, ULONG InstructionLength);
 NTSTATUS NTAPI HandleCpuid(PVIRT_CPU Cpu, ULONG InstructionLength);
 NTSTATUS NTAPI HandleException(PVIRT_CPU Cpu, ULONG InstructionLength);
 NTSTATUS NTAPI HandleInvd(PVIRT_CPU Cpu, ULONG InstructionLength);
+NTSTATUS NTAPI HandleRdpmc(PVIRT_CPU Cpu, ULONG InstructionLength);
 NTSTATUS NTAPI HandleRdtsc(PVIRT_CPU Cpu, ULONG InstructionLength);
 NTSTATUS NTAPI HandleVmCall(PVIRT_CPU Cpu, ULONG InstructionLength);
 NTSTATUS NTAPI HandleVmInstruction(PVIRT_CPU Cpu, ULONG InstructionLength);
