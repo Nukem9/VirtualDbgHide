@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "../Syscall/Hook.h"
 
 NTSTATUS NTAPI HandleUnimplemented(PVIRT_CPU Cpu, ULONG InstructionLength)
 {
@@ -176,49 +177,39 @@ NTSTATUS NTAPI HandleVmCall(PVIRT_CPU Cpu, ULONG InstructionLength)
 {
 	DbgLog("VMCALL: RIP = 0x%llx\n", Cpu->rip);
 
-	if (Cpu->rcx == 0x5644626748696465)
+	//
+	// Does RCX contain the magic value?
+	//
+	if (Cpu->rcx != 0x5644626748696465)
 	{
-		switch ((ULONG)Cpu->rax)
-		{
-		case 0:
-		{
-			// QueryVirtualization (Active)
-			Cpu->rax = TRUE;
-		}
-		break;
-
-		case 0xFFFFFFFF:
-		{
-			// StopVirtualization
-			__debugbreak();
-		}
-		break;
-		}
-
-		Cpu->rip += InstructionLength;
-	}
-
-	/*
-	if ((Cpu->rax == 0x42424242) && (Cpu->rbx == 0x43434343))
-	{
-		DbgLog("got magic sequence, terminating\n");
-
-		ULONG64 Rip = (ULONG64)_GuestExit;
-		ULONG64 Rsp = Cpu->rsp;
-
-		DbgLog("restoring rip=0x%llx, rsp=0x%llx\n", Rip, Rsp);
-		__debugbreak();
-		//_VmxOff(Rip, Rsp);
-
+		//
+		// Raise interrupt and act like the instruction doesn't exist
+		//
+		VmInjectInterrupt(INTERRUPT_HARDWARE_EXCEPTION, VECTOR_INVALID_OPCODE_EXCEPTION, InstructionLength);
 		return STATUS_SUCCESS;
 	}
-	*/
-
+	
 	//
-	// Raise exception and act like the instruction doesn't exist
+	// Handle the function identified in RAX
 	//
-	VmInjectInterrupt(INTERRUPT_HARDWARE_EXCEPTION, VECTOR_INVALID_OPCODE_EXCEPTION, InstructionLength);
+	switch ((ULONG)Cpu->rax)
+	{
+	case 0:
+	{
+		// QueryVirtualization (Active)
+		Cpu->rax = TRUE;
+	}
+	break;
 
+	case 0xFFFFFFFF:
+	{
+		// StopVirtualization
+		__debugbreak();
+	}
+	break;
+	}
+
+	Cpu->rip += InstructionLength;
 	return STATUS_SUCCESS;
 }
 
@@ -319,9 +310,7 @@ NTSTATUS NTAPI HandleMsrRead(PVIRT_CPU Cpu, ULONG InstructionLength)
 	case MSR_GS_BASE:			msr.QuadPart = __readvmx(GUEST_GS_BASE);		break;
 	case MSR_FS_BASE:			msr.QuadPart = __readvmx(GUEST_FS_BASE);		break;
 
-	//case MSR_LSTAR:				msr.QuadPart = NtSyscallHandler;DbgPrint("LSTAR - 0x%p\n", Cpu->rip);break;
-	// PG WIN8.1 scan at around 30 minutes after boot
-	// successfully bypassed
+	case MSR_LSTAR:				msr.QuadPart = NtSyscallHandler;DbgPrint("LSTAR - 0x%p\n", Cpu->rip);break;
 
 	default:					msr.QuadPart = __readmsr(ecx);					break;
 	}
