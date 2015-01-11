@@ -1,3 +1,5 @@
 #pragma once
 
-#include "Syscall.h"
+#include <ntifs.h>
+#include "Hook.h"
+#include "Syscalls.h"

@@ -436,8 +436,6 @@ USHORT _Es();
 USHORT _Ss();
 USHORT _Fs();
 USHORT _Gs();
-ULONG64 _Cr2();
-VOID _SetCr2(ULONG64 NewCr2);
 
 ULONG64 _Rflags();
 ULONG64 _Rsp();
@@ -461,15 +459,8 @@ FORCEINLINE size_t __readvmx(ULONG Type)
 	return val;
 }
 
-VOID _VmxOff(ULONG64 Rip, ULONG64 Rsp);
-
-VOID _GuestEntryPoint();
-VOID _ExitHandler();
-
-NTSTATUS _StartVirtualization();
-
-VOID _StopVirtualization();
-VOID _GuestExit();
+unsigned __int64 __readcr2();
+VOID __writecr2(unsigned __int64 Data);
 
 VOID __invd();
 

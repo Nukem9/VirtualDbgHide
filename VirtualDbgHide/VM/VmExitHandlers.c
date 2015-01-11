@@ -85,7 +85,7 @@ NTSTATUS NTAPI HandleException(PVIRT_CPU Cpu, ULONG InstructionLength)
 			//
 			ExitQualification = __readvmx(EXIT_QUALIFICATION);
 
-			_SetCr2(ExitQualification);
+			__writecr2(ExitQualification);
 			//__vmx_vmwrite(VM_ENTRY_EXCEPTION_ERROR_CODE, ErrorCode);
 			VmInjectInterrupt(pEvent->InterruptionType, pEvent->Vector, 0);
 			break;
@@ -168,7 +168,8 @@ NTSTATUS NTAPI HandleVmCall(PVIRT_CPU Cpu, ULONG InstructionLength)
 		ULONG64 Rsp = Cpu->rsp;
 
 		DbgLog("restoring rip=0x%llx, rsp=0x%llx\n", Rip, Rsp);
-		_VmxOff(Rip, Rsp);
+		__debugbreak();
+		//_VmxOff(Rip, Rsp);
 
 		return STATUS_SUCCESS;
 	}

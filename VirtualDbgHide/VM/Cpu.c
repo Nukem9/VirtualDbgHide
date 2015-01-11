@@ -79,7 +79,7 @@ VOID CpuSetupVMCS(PVIRT_CPU Cpu, PVOID GuestRsp)
 	__vmx_vmwrite(GUEST_CR4, __readcr4());
 	__vmx_vmwrite(GUEST_DR7, __readdr(7));
 	__vmx_vmwrite(GUEST_RSP, (SIZE_T)GuestRsp);
-	__vmx_vmwrite(GUEST_RIP, (SIZE_T)_GuestEntryPoint);
+	__vmx_vmwrite(GUEST_RIP, (SIZE_T)_GuestEntry);
 	__vmx_vmwrite(GUEST_RFLAGS, _Rflags());
 
 	PVOID GdtBase = (PVOID)_GdtBase();

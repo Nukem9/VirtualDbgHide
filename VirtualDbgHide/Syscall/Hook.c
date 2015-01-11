@@ -29,21 +29,6 @@ ULONG_PTR FindNtoskrnlBase(ULONG_PTR Addr)
 
 	return 0;
 }
-
-NTSTATUS (NTAPI * NtReadVirtualMemory)(HANDLE ProcessHandle, PVOID BaseAddress, PVOID Buffer, SIZE_T NumberOfBytesToRead, PSIZE_T NumberOfBytesRead);
-
-volatile ULONG64 numCalls = 0;
-
-DECLSPEC_NOINLINE NTSTATUS NTAPI hk_NtReadVirtualMemory(HANDLE ProcessHandle, PVOID BaseAddress, PVOID Buffer, SIZE_T NumberOfBytesToRead, PSIZE_T NumberOfBytesRead)
-{
-	numCalls++;
-
-	if (numCalls % 1000 == 0)
-		DbgLog("NtReadVirtualMemory - 0x%p 0x%p 0x%p 0x%p 0x%p\n", ProcessHandle, BaseAddress, Buffer, NumberOfBytesToRead, NumberOfBytesRead);
-
-	return NtReadVirtualMemory(ProcessHandle, BaseAddress, Buffer, NumberOfBytesToRead, NumberOfBytesRead);
-}
-
 VOID SyscallEntryPoint();
 
 NTSTATUS AddNtServiceCallHook(ULONG Index, UCHAR ParameterCount, PVOID Function)
@@ -79,7 +64,7 @@ VOID QueryNtServiceCall()
 	NtKernelBase = FindNtoskrnlBase(NtSyscallHandler);
 	DbgLog("NtOSBase: 0x%llx\n", NtKernelBase);
 
-	*(ULONG_PTR *)&NtReadVirtualMemory = (ULONG_PTR)NtKernelBase + 0x3D0AF4;
+//	*(ULONG_PTR *)&NtReadVirtualMemory = (ULONG_PTR)NtKernelBase + 0x3D0AF4;
 
 	RtlSecureZeroMemory(SyscallHookEnabled, sizeof(SyscallHookEnabled));
 	RtlSecureZeroMemory(SyscallParamTable, sizeof(SyscallParamTable));

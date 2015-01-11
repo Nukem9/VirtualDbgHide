@@ -56,10 +56,19 @@
     <ClInclude Include="VM\stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Syscall\Syscall.h">
+    <ClInclude Include="Syscall\stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Syscall\stdafx.h">
+    <ClInclude Include="Syscall\Hook.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Syscall\Syscalls.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VM\amd64vm.asm">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VM\amd64vm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -91,7 +100,13 @@
     <ClCompile Include="VM\Vm.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Syscall\Syscall.c">
+    <ClCompile Include="IoControl.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Syscall\Hook.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Syscall\Syscalls.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

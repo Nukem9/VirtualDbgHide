@@ -66,6 +66,19 @@ VOID VmStart(PVOID StartContext)
 	KeReleaseMutex(&mutex, FALSE);
 }
 
+CHAR VmIsActive()
+{
+	__try
+	{
+		return _QueryVirtualization();
+	}
+	__except (EXCEPTION_EXECUTE_HANDLER)
+	{
+	}
+
+	return FALSE;
+}
+
 NTSTATUS StartVirtualization(PVOID GuestRsp)
 {
 	ULONG processorId	= KeGetCurrentProcessorNumber();
