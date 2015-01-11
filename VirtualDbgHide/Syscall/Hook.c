@@ -67,5 +67,6 @@ VOID QueryNtServiceCall()
 	RtlSecureZeroMemory(SyscallParamTable, sizeof(SyscallParamTable));
 	RtlSecureZeroMemory(SyscallPointerTable, sizeof(SyscallPointerTable));
 
+	AddNtServiceCallHook(0xE, 1, (PVOID)&hk_NtClose);
 //	AddNtServiceCallHook(0x3E, 5, (PVOID)&hk_NtReadVirtualMemory);
 }
