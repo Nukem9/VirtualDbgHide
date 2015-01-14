@@ -6,6 +6,7 @@
 //
 
 NTSTATUS (NTAPI * NtReadVirtualMemory)(HANDLE ProcessHandle, PVOID BaseAddress, PVOID Buffer, SIZE_T NumberOfBytesToRead, PSIZE_T NumberOfBytesRead);
+NTSTATUS (NTAPI * NtQuerySystemInformation)(SYSTEM_INFORMATION_CLASS SystemInformationClass, PVOID SystemInformation, ULONG SystemInformationLength, PULONG ReturnLength);
 
 volatile ULONG64 numCalls = 0;
 
@@ -35,4 +36,39 @@ NTSTATUS NTAPI hk_NtClose(HANDLE Handle)
 	//
 	ObDereferenceObject(object);
 	return NtClose(Handle);
+}
+
+NTSTATUS NTAPI hk_NtQuerySystemInformation(SYSTEM_INFORMATION_CLASS SystemInformationClass, PVOID SystemInformation, ULONG SystemInformationLength, PULONG ReturnLength)
+{
+	NTSTATUS status = NtQuerySystemInformation(SystemInformationClass, SystemInformation, SystemInformationLength, ReturnLength);
+
+	//
+	// Did the first call succeed?
+	//
+	if (!NT_SUCCESS(status))
+		return status;
+
+	//
+	// It did, so now modify any return values
+	//
+	if (SystemInformation)
+	{
+		if (SystemInformationClass == SystemKernelDebuggerInformation)
+		{
+			PSYSTEM_KERNEL_DEBUGGER_INFORMATION debugInfo = (PSYSTEM_KERNEL_DEBUGGER_INFORMATION)SystemInformation;
+
+			debugInfo->DebuggerEnabled = FALSE;
+			debugInfo->DebuggerNotPresent = TRUE;
+		}
+		else if (SystemInformationClass == SystemKernelDebuggerInformationEx)
+		{
+			PSYSTEM_KERNEL_DEBUGGER_INFORMATION_EX debugInfoEx = (PSYSTEM_KERNEL_DEBUGGER_INFORMATION_EX)SystemInformation;
+
+			debugInfoEx->BootedDebug = FALSE;
+			debugInfoEx->DebuggerEnabled = FALSE;
+			debugInfoEx->DebuggerPresent = FALSE;
+		}
+	}
+
+	return status;
 }

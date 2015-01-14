@@ -66,6 +66,7 @@
     <ClCompile Include="VM\VTx.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Syscall\Nt.h" />
     <ClInclude Include="Syscall\SSDT.h" />
     <ClInclude Include="Syscall\stdafx.h" />
     <ClInclude Include="Syscall\Syscalls.h" />

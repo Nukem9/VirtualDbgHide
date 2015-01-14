@@ -71,6 +71,9 @@
     <ClInclude Include="Syscall\SSDT.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Syscall\Nt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Driver.c">
