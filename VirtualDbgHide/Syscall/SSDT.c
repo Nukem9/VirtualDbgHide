@@ -22,7 +22,7 @@ NTSTATUS NTAPI hk_NtReadVirtualMemory(HANDLE ProcessHandle, PVOID BaseAddress, P
 
 NTSTATUS NTAPI hk_NtClose(HANDLE Handle)
 {
-	PVOID object = NULL;
+	PVOID object	= NULL;
 	NTSTATUS status = ObReferenceObjectByHandle(Handle, 0, NULL, UserMode, &object, NULL);
 
 	//
@@ -73,18 +73,38 @@ NTSTATUS NTAPI hk_NtQuerySystemInformation(SYSTEM_INFORMATION_CLASS SystemInform
 		{
 			PSYSTEM_KERNEL_DEBUGGER_INFORMATION debugInfo = (PSYSTEM_KERNEL_DEBUGGER_INFORMATION)SystemInformation;
 
-			debugInfo->DebuggerEnabled = FALSE;
-			debugInfo->DebuggerNotPresent = TRUE;
+			debugInfo->DebuggerEnabled		= FALSE;
+			debugInfo->DebuggerNotPresent	= TRUE;
 		}
 		else if (SystemInformationClass == SystemKernelDebuggerInformationEx)
 		{
 			PSYSTEM_KERNEL_DEBUGGER_INFORMATION_EX debugInfoEx = (PSYSTEM_KERNEL_DEBUGGER_INFORMATION_EX)SystemInformation;
 
-			debugInfoEx->BootedDebug = FALSE;
-			debugInfoEx->DebuggerEnabled = FALSE;
-			debugInfoEx->DebuggerPresent = FALSE;
+			debugInfoEx->BootedDebug		= FALSE;
+			debugInfoEx->DebuggerEnabled	= FALSE;
+			debugInfoEx->DebuggerPresent	= FALSE;
 		}
 	}
 
 	return status;
+}
+
+NTSTATUS NTAPI hk_NtSetInformationThread(HANDLE ThreadHandle, THREADINFOCLASS ThreadInformationClass, PVOID ThreadInformation, ULONG ThreadInformationLength)
+{
+	//
+	// Filter out ThreadHideFromDebugger
+	//
+	if (ThreadInformationClass == ThreadHideFromDebugger)
+	{
+		PKTHREAD object = NULL;
+		NTSTATUS status = ObReferenceObjectByHandle(ThreadHandle, 0, PsThreadType, ExGetPreviousMode(), (PVOID *)&object, NULL);
+		
+		if (NT_SUCCESS(status))
+		{
+			ObDereferenceObject(object);
+			return STATUS_SUCCESS;
+		}
+	}
+
+	return NtSetInformationThread(ThreadHandle, ThreadInformationClass, ThreadInformation, ThreadInformationLength);
 }

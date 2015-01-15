@@ -8,8 +8,8 @@ ULONG_PTR GetNtoskrnlBase()
 	// Scan down from a given symbol’s address.
 	// Align to PAGE_SIZE first.
 	//
-	ULONG_PTR addr = (ULONG_PTR)&MmGetSystemRoutineAddress;
-	addr = (addr & ~0xfff);
+	ULONG_PTR addr	= (ULONG_PTR)&MmGetSystemRoutineAddress;
+	addr			= (addr & ~0xfff);
 
 	__try
 	{
@@ -144,16 +144,16 @@ NTSTATUS RemoveDriverFromSysModuleInfo(PVOID SystemInformation, ULONG SystemInfo
 	PSYSTEM_MODULE_INFORMATION moduleInfo = (PSYSTEM_MODULE_INFORMATION)SystemInformation;
 
 	PSYSTEM_MODULE startPointer = NULL;
-	PSYSTEM_MODULE copyPointer = NULL;
-	ULONG remainderBytes = 0;
+	PSYSTEM_MODULE copyPointer	= NULL;
+	ULONG remainderBytes		= 0;
 
 	for (ULONG i = 0; i < entryCount; i++)
 	{
 		if (moduleInfo->Modules[i].ImageBase == (PVOID)0xfffff80010834000) // FIXME
 		{
-			startPointer = &moduleInfo->Modules[i];
-			copyPointer = &moduleInfo->Modules[i + 1];
-			remainderBytes = (entryCount - (i + 1)) * sizeof(SYSTEM_MODULE);
+			startPointer	= &moduleInfo->Modules[i];
+			copyPointer		= &moduleInfo->Modules[i + 1];
+			remainderBytes	= (entryCount - (i + 1)) * sizeof(SYSTEM_MODULE);
 
 			break;
 		}
