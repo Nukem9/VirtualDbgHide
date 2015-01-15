@@ -55,7 +55,7 @@ NTSTATUS NTAPI hk_NtQuerySystemInformation(SYSTEM_INFORMATION_CLASS SystemInform
 		// if it is not null and SystemInformation is null
 		//	
 		if (!SystemInformation && ReturnLength && *ReturnLength >= sizeof(SYSTEM_MODULE))
-			ReturnLength -= sizeof(SYSTEM_MODULE);
+			*ReturnLength -= sizeof(SYSTEM_MODULE);
 	}
 
 	//

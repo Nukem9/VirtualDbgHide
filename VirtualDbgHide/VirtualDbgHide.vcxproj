@@ -53,7 +53,7 @@
   <ItemGroup>
     <ClCompile Include="IoControl.c" />
     <ClCompile Include="Syscall\SSDT.c" />
-    <ClCompile Include="Syscall\Syscalls.c" />
+    <ClCompile Include="Syscall\Utility.c" />
     <ClCompile Include="VM\ControlArea.c" />
     <ClCompile Include="VM\Cpu.c" />
     <ClCompile Include="Driver.c" />
@@ -69,7 +69,7 @@
     <ClInclude Include="Syscall\Nt.h" />
     <ClInclude Include="Syscall\SSDT.h" />
     <ClInclude Include="Syscall\stdafx.h" />
-    <ClInclude Include="Syscall\Syscalls.h" />
+    <ClInclude Include="Syscall\Utility.h" />
     <ClInclude Include="VM\amd64.h" />
     <MASM Include="VM\amd64vm.asm">
       <FileType>CppHeader</FileType>
