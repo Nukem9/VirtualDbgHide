@@ -1,5 +1,6 @@
 #pragma once
 
-ULONG_PTR GetNtoskrnlBase();
-ULONG_PTR GetSSDTBase();
-ULONG_PTR GetSSDTEntry(ULONG TableIndex);
+NTSTATUS NTAPI hk_NtReadVirtualMemory(HANDLE ProcessHandle, PVOID BaseAddress, PVOID Buffer, SIZE_T NumberOfBytesToRead, PSIZE_T NumberOfBytesRead);
+
+NTSTATUS NTAPI hk_NtClose(HANDLE Handle);
+NTSTATUS NTAPI hk_NtQuerySystemInformation(SYSTEM_INFORMATION_CLASS SystemInformationClass, PVOID SystemInformation, ULONG SystemInformationLength, PULONG ReturnLength);
