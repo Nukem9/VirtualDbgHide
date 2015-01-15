@@ -43,6 +43,7 @@ NTSTATUS RemoveNtServiceCallHook(ULONG Index)
 	return AddNtServiceCallHook(Index, 0, NULL);
 }
 
+extern NTSTATUS(NTAPI * NtQuerySystemInformation)(SYSTEM_INFORMATION_CLASS SystemInformationClass, PVOID SystemInformation, ULONG SystemInformationLength, PULONG ReturnLength);
 VOID QueryNtServiceCall()
 {
 	//
@@ -67,6 +68,9 @@ VOID QueryNtServiceCall()
 	RtlSecureZeroMemory(SyscallParamTable, sizeof(SyscallParamTable));
 	RtlSecureZeroMemory(SyscallPointerTable, sizeof(SyscallPointerTable));
 
+	*(ULONG_PTR *)&NtQuerySystemInformation = NtKernelBase + 0x3D1EA8;
+
 	AddNtServiceCallHook(0xE, 1, (PVOID)&hk_NtClose);
 //	AddNtServiceCallHook(0x3E, 5, (PVOID)&hk_NtReadVirtualMemory);
+	AddNtServiceCallHook(0x35, 4, (PVOID)&hk_NtQuerySystemInformation);
 }

@@ -118,3 +118,65 @@ ULONG_PTR GetSSDTEntry(ULONG TableIndex)
 
 	return entry;
 }
+
+NTSTATUS RemoveDriverFromSysModuleInfo(PVOID SystemInformation, ULONG SystemInformationLength, PULONG OutLength)
+{
+	//
+	// Subtract the size of the base container
+	//
+	if (SystemInformationLength <= sizeof(SYSTEM_MODULE_INFORMATION))
+		return STATUS_INFO_LENGTH_MISMATCH;
+
+	SystemInformationLength -= sizeof(SYSTEM_MODULE_INFORMATION);
+
+	//
+	// Determine the SYSTEM_MODULE count
+	//
+	ULONG entryCount = SystemInformationLength / sizeof(SYSTEM_MODULE);
+
+	//
+	// Get a pointer to the modules and loop each index
+	//
+	PSYSTEM_MODULE_INFORMATION moduleInfo = (PSYSTEM_MODULE_INFORMATION)SystemInformation;
+
+	PSYSTEM_MODULE startPointer = NULL;
+	PSYSTEM_MODULE copyPointer = NULL;
+	ULONG remainderBytes = 0;
+
+	for (ULONG i = 0; i < entryCount; i++)
+	{
+		if (moduleInfo->Modules[i].ImageBase == (PVOID)0xfffff80010834000) // FIXME
+		{
+			startPointer = &moduleInfo->Modules[i];
+			copyPointer = &moduleInfo->Modules[i + 1];
+			remainderBytes = (entryCount - (i + 1)) * sizeof(SYSTEM_MODULE);
+
+			break;
+		}
+	}
+
+	if (!startPointer || !copyPointer)
+		return STATUS_NOT_FOUND;
+
+	//
+	// Overwrite the data for this driver and fix up variables
+	//
+	ULONG modifiedLength = (SystemInformationLength - sizeof(SYSTEM_MODULE));
+
+	if (remainderBytes > 0)
+		RtlMoveMemory(startPointer, copyPointer, remainderBytes);
+
+	//
+	// Zero the end to prevent leaking any data
+	//
+	RtlZeroMemory((PUCHAR)SystemInformation + modifiedLength, sizeof(SYSTEM_MODULE));
+
+	//
+	// Fix the output parameter and internal struct counter
+	//
+	if (OutLength)
+		*OutLength = modifiedLength;
+
+	moduleInfo->ModulesCount -= 1;
+	return STATUS_SUCCESS;
+}

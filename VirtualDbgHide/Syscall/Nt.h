@@ -1,5 +1,7 @@
 #pragma once
 
+#define CHECK_SIZE(str, size) static_assert(sizeof(str) == size, "Invalid " #str " size");
+
 typedef enum _SYSTEM_INFORMATION_CLASS
 {
 	SystemBasicInformation = 0x0,
@@ -172,11 +174,36 @@ typedef enum _OBJECT_INFORMATION_CLASS
 	MaxObjectInfoClass,
 } OBJECT_INFORMATION_CLASS;
 */
+
+typedef struct _SYSTEM_MODULE
+{
+	HANDLE Section;
+	PVOID MappedBase;
+	PVOID ImageBase;
+	ULONG ImageSize;
+	ULONG Flags;
+	USHORT LoadOrderIndex;
+	USHORT InitOrderIndex;
+	USHORT LoadCount;
+	USHORT OffsetToFileName;
+	UCHAR FullPathName[256];
+} SYSTEM_MODULE, *PSYSTEM_MODULE;
+CHECK_SIZE(SYSTEM_MODULE, 0x128);
+
+#pragma warning(disable:4200)
+typedef struct _SYSTEM_MODULE_INFORMATION
+{
+	ULONG                ModulesCount;
+	SYSTEM_MODULE        Modules[0];
+} SYSTEM_MODULE_INFORMATION, *PSYSTEM_MODULE_INFORMATION;
+CHECK_SIZE(SYSTEM_MODULE_INFORMATION, 0x8);
+
 typedef struct _SYSTEM_KERNEL_DEBUGGER_INFORMATION
 {
 	BOOLEAN DebuggerEnabled;
 	BOOLEAN DebuggerNotPresent;
 } SYSTEM_KERNEL_DEBUGGER_INFORMATION, *PSYSTEM_KERNEL_DEBUGGER_INFORMATION;
+CHECK_SIZE(SYSTEM_KERNEL_DEBUGGER_INFORMATION, 0x2);
 
 typedef struct _SYSTEM_KERNEL_DEBUGGER_INFORMATION_EX
 {
@@ -184,3 +211,4 @@ typedef struct _SYSTEM_KERNEL_DEBUGGER_INFORMATION_EX
 	BOOLEAN DebuggerEnabled;
 	BOOLEAN DebuggerPresent;
 } SYSTEM_KERNEL_DEBUGGER_INFORMATION_EX, *PSYSTEM_KERNEL_DEBUGGER_INFORMATION_EX;
+CHECK_SIZE(SYSTEM_KERNEL_DEBUGGER_INFORMATION_EX, 0x3);
