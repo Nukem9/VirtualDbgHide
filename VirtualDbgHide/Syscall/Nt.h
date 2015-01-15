@@ -2,6 +2,14 @@
 
 #define CHECK_SIZE(str, size) static_assert(sizeof(str) == size, "Invalid " #str " size");
 
+typedef struct _SYSTEM_SERVICE_TABLE
+{
+	PVOID *ServiceTable;
+	PVOID *CounterTable;
+	ULONG ServiceLimit;
+	PUCHAR ArgumentTable;
+} SYSTEM_SERVICE_TABLE, *PSYSTEM_SERVICE_TABLE;
+
 typedef enum _SYSTEM_INFORMATION_CLASS
 {
 	SystemBasicInformation = 0x0,
