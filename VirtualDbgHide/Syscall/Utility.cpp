@@ -185,15 +185,52 @@ NTSTATUS RemoveDriverFromSysModuleInfo(PVOID SystemInformation, ULONG SystemInfo
 	return STATUS_SUCCESS;
 }
 
-UNICODE_STRING DebugObject;
-NTSTATUS RemoveDebugObjectInfo(OBJECT_TYPE_INFORMATION *Information)
+NTSTATUS RemoveDebugObjectInfo(PVOID ObjectInformation, ULONG ObjectInformationLength)
 {
-	RtlInitUnicodeString(&DebugObject, L"DebugObject");
+	//
+	// Validate the size of the base container
+	//
+	if (ObjectInformationLength <= sizeof(OBJECT_ALL_TYPES_INFORMATION))
+		return STATUS_INFO_LENGTH_MISMATCH;
 
+	//
+	// Enumerate all entries
+	//
+	POBJECT_ALL_TYPES_INFORMATION typesInfo = (POBJECT_ALL_TYPES_INFORMATION)ObjectInformation;
+	POBJECT_TYPE_INFORMATION typeInfo		= typesInfo->TypeInformation;
+
+	for (ULONG i = 0; i < typesInfo->NumberOfTypes; i++)
+	{
+		USHORT offset	= (typeInfo->Name.MaximumLength + 3) & ~3;
+		PUCHAR nextType = (PUCHAR)(typeInfo->Name.Buffer) + offset;
+
+		//
+		// Should this entry be faked?
+		//
+		if (NT_SUCCESS(RemoveSingleDebugObjectInfo(typeInfo)))
+			return STATUS_SUCCESS;
+
+		//
+		// Validate the pointer first
+		//
+		if (nextType >= ((PUCHAR)ObjectInformation + ObjectInformationLength))
+			break;
+
+		//
+		// Increment the loop
+		//
+		typeInfo = (POBJECT_TYPE_INFORMATION)nextType;
+	}
+
+	return STATUS_NOT_FOUND;
+}
+
+NTSTATUS RemoveSingleDebugObjectInfo(OBJECT_TYPE_INFORMATION *Information)
+{
 	//
 	// Does the object type information name match "DebugObject"?
 	//
-	if (RtlEqualUnicodeString(&Information->Name, &DebugObject, FALSE))
+	if (RtlEqualUnicodeString(&Information->Name, &Nt::DebugObject, FALSE))
 	{
 		Information->TotalNumberOfObjects = 0;
 		Information->TotalNumberOfHandles = 0;

@@ -247,8 +247,16 @@ typedef struct _OBJECT_TYPE_INFORMATION
 	ULONG NonPagedPoolUsage;
 } OBJECT_TYPE_INFORMATION, *POBJECT_TYPE_INFORMATION;
 
+typedef struct _OBJECT_ALL_TYPES_INFORMATION
+{
+	ULONG NumberOfTypes;
+	OBJECT_TYPE_INFORMATION TypeInformation[0];
+} OBJECT_ALL_TYPES_INFORMATION, *POBJECT_ALL_TYPES_INFORMATION;
+
 namespace Nt
 {
+	extern UNICODE_STRING DebugObject;
+
 	NTSTATUS NTAPI NtReadVirtualMemory(HANDLE ProcessHandle, PVOID BaseAddress, PVOID Buffer, SIZE_T NumberOfBytesToRead, PSIZE_T NumberOfBytesRead);
 	NTSTATUS NTAPI NtClose(HANDLE Handle);
 	NTSTATUS NTAPI NtQuerySystemInformation(SYSTEM_INFORMATION_CLASS SystemInformationClass, PVOID SystemInformation, ULONG SystemInformationLength, PULONG ReturnLength);

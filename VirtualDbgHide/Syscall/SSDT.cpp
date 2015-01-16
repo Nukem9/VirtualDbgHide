@@ -41,8 +41,10 @@ NTSTATUS NTAPI hk_NtQuerySystemInformation(SYSTEM_INFORMATION_CLASS SystemInform
 
 	//
 	// Special case for SystemModuleInformation (11)
+	// NOTE: Possible STATUS_INFO_LENGTH_MISMATCH (Short write)
 	//
-	if (SystemInformationClass == SystemModuleInformation)
+	if ((SystemInformationClass == SystemModuleInformation) &&
+		(NT_SUCCESS(status) || status == STATUS_INFO_LENGTH_MISMATCH))
 	{
 		if (SystemInformation)
 			RemoveDriverFromSysModuleInfo(SystemInformation, SystemInformationLength, ReturnLength);
@@ -50,6 +52,7 @@ NTSTATUS NTAPI hk_NtQuerySystemInformation(SYSTEM_INFORMATION_CLASS SystemInform
 		//
 		// ALWAYS subtract one SYSTEM_MODULE from the return length
 		// if it is not null and SystemInformation is null
+		// (This driver counts as one module)
 		//	
 		if (!SystemInformation && ReturnLength && *ReturnLength >= sizeof(SYSTEM_MODULE))
 			*ReturnLength -= sizeof(SYSTEM_MODULE);
@@ -111,26 +114,27 @@ NTSTATUS NTAPI hk_NtQueryObject(HANDLE Handle, OBJECT_INFORMATION_CLASS ObjectIn
 	NTSTATUS status = Nt::NtQueryObject(Handle, ObjectInformationClass, ObjectInformation, ObjectInformationLength, ReturnLength);
 
 	//
-	// Did the function call succeed?
-	//
-	if (!NT_SUCCESS(status))
-		return status;
-
-	//
 	// Hide debug information queries
+	// NOTE: Possible STATUS_INFO_LENGTH_MISMATCH (Short write)
 	//
-	if (ObjectInformation)
+	if ((ObjectInformation) &&
+		(NT_SUCCESS(status) || status == STATUS_INFO_LENGTH_MISMATCH))
 	{
 		if (ObjectInformationClass == ObjectTypeInformation)
 		{
 			//
 			// Hide the single debug object info
 			//
-			RemoveDebugObjectInfo((OBJECT_TYPE_INFORMATION *)ObjectInformation);
+			if (ObjectInformationLength >= sizeof(OBJECT_TYPE_INFORMATION))
+				RemoveSingleDebugObjectInfo((POBJECT_TYPE_INFORMATION)ObjectInformation);
 		}
 		else if (ObjectInformationClass == ObjectTypesInformation)
 		{
-
+			//
+			// Loop all entries and fix the DebugObject entry
+			//
+			if (ObjectInformationLength > 0)
+				RemoveDebugObjectInfo(ObjectInformation, ObjectInformationLength);
 		}
 	}
 
