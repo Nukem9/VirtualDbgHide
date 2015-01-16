@@ -140,3 +140,9 @@ NTSTATUS NTAPI hk_NtQueryObject(HANDLE Handle, OBJECT_INFORMATION_CLASS ObjectIn
 
 	return status;
 }
+
+NTSTATUS NTAPI hk_NtSystemDebugControl(DEBUG_CONTROL_CODE ControlCode, PVOID InputBuffer, ULONG InputBufferLength, PVOID OutputBuffer, ULONG OutputBufferLength, PULONG ReturnLength)
+{
+	//return STATUS_DEBUGGER_INACTIVE;
+	return Nt::NtSystemDebugControl(ControlCode, InputBuffer, InputBufferLength, OutputBuffer, OutputBufferLength, ReturnLength);
+}

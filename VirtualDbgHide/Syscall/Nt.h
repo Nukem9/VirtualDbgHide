@@ -183,6 +183,42 @@ typedef enum _OBJECT_INFORMATION_CLASS_UNDOC
 	MaxObjectInfoClass,
 } OBJECT_INFORMATION_CLASS_UNDOC;
 
+typedef enum _DEBUG_CONTROL_CODE
+{
+	SysDbgQueryModuleInformation = 0,
+	SysDbgQueryTraceInformation = 1,
+	SysDbgSetTracePoint = 2,
+	SysDbgSetSpecialCall = 3,
+	SysDbgClearSpecialCalls = 4,
+	SysDbgQuerySpecialCalls = 5,
+	SysDbgBreakPoint = 6,
+	SysDbgQueryVersion = 7,
+	SysDbgReadVirtual = 8,
+	SysDbgWriteVirtual = 9,
+	SysDbgReadPhysical = 10,
+	SysDbgWritePhysical = 11,
+	SysDbgReadControlSpace = 12,
+	SysDbgWriteControlSpace = 13,
+	SysDbgReadIoSpace = 14,
+	SysDbgWriteIoSpace = 15,
+	SysDbgReadMsr = 16,
+	SysDbgWriteMsr = 17,
+	SysDbgReadBusData = 18,
+	SysDbgWriteBusData = 19,
+	SysDbgCheckLowMemory = 20,
+	SysDbgEnableKernelDebugger = 21,
+	SysDbgDisableKernelDebugger = 22,
+	SysDbgGetAutoKdEnable = 23,
+	SysDbgSetAutoKdEnable = 24,
+	SysDbgGetPrintBufferSize = 25,
+	SysDbgSetPrintBufferSize = 26,
+	SysDbgGetKdUmExceptionEnable = 27,
+	SysDbgSetKdUmExceptionEnable = 28,
+	SysDbgGetTriageDump = 29,
+	SysDbgGetKdBlockEnable = 30,
+	SysDbgSetKdBlockEnable = 31
+} DEBUG_CONTROL_CODE;
+
 typedef struct _SYSTEM_MODULE
 {
 	HANDLE Section;
@@ -262,4 +298,5 @@ namespace Nt
 	NTSTATUS NTAPI NtQuerySystemInformation(SYSTEM_INFORMATION_CLASS SystemInformationClass, PVOID SystemInformation, ULONG SystemInformationLength, PULONG ReturnLength);
 	NTSTATUS NTAPI NtSetInformationThread(HANDLE ThreadHandle, THREADINFOCLASS ThreadInformationClass, PVOID ThreadInformation, ULONG ThreadInformationLength);
 	NTSTATUS NTAPI NtQueryObject(HANDLE Handle, OBJECT_INFORMATION_CLASS ObjectInformationClass, PVOID ObjectInformation, ULONG ObjectInformationLength, PULONG ReturnLength);
+	NTSTATUS NTAPI NtSystemDebugControl(DEBUG_CONTROL_CODE ControlCode, PVOID InputBuffer, ULONG InputBufferLength, PVOID OutputBuffer, ULONG OutputBufferLength, PULONG ReturnLength);
 }
