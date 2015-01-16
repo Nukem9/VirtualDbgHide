@@ -14,10 +14,17 @@ typedef struct _SYSCALL_HOOK_INFO
 	USHORT IdNtSetContextThread;
 } SYSCALL_HOOK_INFO, * PSYSCALL_HOOK_INFO;
 
-extern ULONG64 NtSyscallHandler;
-extern ULONG64 GuestSyscallHandler;
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+	extern ULONG64 NtSyscallHandler;
+	extern ULONG64 GuestSyscallHandler;
 
-extern ULONG64 NtKernelBase;
-extern ULONG64 NtKernelSSDT;
+	extern ULONG64 NtKernelBase;
+	extern ULONG64 NtKernelSSDT;
+#ifdef __cplusplus
+}
+#endif
 
 VOID QueryNtServiceCall();

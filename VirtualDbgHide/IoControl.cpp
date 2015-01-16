@@ -34,7 +34,8 @@ NTSTATUS DispatchIoControl(PDEVICE_OBJECT DeviceObject, PIRP Irp)
 				break;
 			}
 
-			PSYSCALL_HOOK_INFO info = Irp->AssociatedIrp.SystemBuffer;
+			//PSYSCALL_HOOK_INFO info = Irp->AssociatedIrp.SystemBuffer;
+			//UNREFERENCED_PARAMETER(info);
 		}
 		break;
 
@@ -47,7 +48,7 @@ NTSTATUS DispatchIoControl(PDEVICE_OBJECT DeviceObject, PIRP Irp)
 			status = PsCreateSystemThread(&threadHandle, THREAD_ALL_ACCESS, NULL, NULL, NULL, VmStart, NULL);
 
 			if (NT_SUCCESS(status))
-				NtClose(threadHandle);
+				ZwClose(threadHandle);
 		}
 		break;
 

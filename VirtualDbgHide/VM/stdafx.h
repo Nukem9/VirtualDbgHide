@@ -1,5 +1,10 @@
 #pragma once
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include <ntifs.h>
 #include <intrin.h>
 
@@ -20,3 +25,7 @@
 #include "VmInterrupt.h"
 #include "VmExitHandlers.h"
 #include "VmExit.h"
+
+#ifdef __cplusplus
+}
+#endif

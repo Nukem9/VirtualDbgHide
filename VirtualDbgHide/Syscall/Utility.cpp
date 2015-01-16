@@ -184,3 +184,22 @@ NTSTATUS RemoveDriverFromSysModuleInfo(PVOID SystemInformation, ULONG SystemInfo
 	moduleInfo->ModulesCount -= 1;
 	return STATUS_SUCCESS;
 }
+
+UNICODE_STRING DebugObject;
+NTSTATUS RemoveDebugObjectInfo(OBJECT_TYPE_INFORMATION *Information)
+{
+	RtlInitUnicodeString(&DebugObject, L"DebugObject");
+
+	//
+	// Does the object type information name match "DebugObject"?
+	//
+	if (RtlEqualUnicodeString(&Information->Name, &DebugObject, FALSE))
+	{
+		Information->TotalNumberOfObjects = 0;
+		Information->TotalNumberOfHandles = 0;
+
+		return STATUS_SUCCESS;
+	}
+
+	return STATUS_NOT_FOUND;
+}

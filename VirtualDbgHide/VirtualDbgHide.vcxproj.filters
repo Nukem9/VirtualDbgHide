@@ -76,9 +76,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Driver.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="VM\ControlArea.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -103,16 +100,22 @@
     <ClCompile Include="VM\Vm.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IoControl.c">
+    <ClCompile Include="Syscall\Utility.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Syscall\Hook.c">
+    <ClCompile Include="Syscall\SSDT.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Syscall\SSDT.c">
+    <ClCompile Include="Syscall\Nt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Syscall\Utility.c">
+    <ClCompile Include="Syscall\Hook.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Driver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IoControl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

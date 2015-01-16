@@ -51,14 +51,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="IoControl.c" />
-    <ClCompile Include="Syscall\SSDT.c" />
-    <ClCompile Include="Syscall\Utility.c" />
+    <ClCompile Include="IoControl.cpp" />
+    <ClCompile Include="Syscall\Nt.cpp" />
+    <ClCompile Include="Syscall\SSDT.cpp" />
+    <ClCompile Include="Syscall\Utility.cpp" />
     <ClCompile Include="VM\ControlArea.c" />
     <ClCompile Include="VM\Cpu.c" />
-    <ClCompile Include="Driver.c" />
+    <ClCompile Include="Driver.cpp" />
     <ClCompile Include="VM\Misc.c" />
-    <ClCompile Include="Syscall\Hook.c" />
+    <ClCompile Include="Syscall\Hook.cpp" />
     <ClCompile Include="VM\Vm.c" />
     <ClCompile Include="VM\VmExitHandlers.c" />
     <ClCompile Include="VM\VmExit.c" />

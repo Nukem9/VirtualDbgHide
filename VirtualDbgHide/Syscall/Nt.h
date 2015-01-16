@@ -1,6 +1,6 @@
 #pragma once
 
-#define CHECK_SIZE(str, size) static_assert(sizeof(str) == size, "Invalid " #str " size");
+#define CHECK_SIZE(str, size) static_assert(sizeof(str) == (size), "Invalid " #str " size")
 
 typedef struct _SYSTEM_SERVICE_TABLE
 {
@@ -9,6 +9,7 @@ typedef struct _SYSTEM_SERVICE_TABLE
 	ULONG ServiceLimit;
 	PUCHAR ArgumentTable;
 } SYSTEM_SERVICE_TABLE, *PSYSTEM_SERVICE_TABLE;
+//CHECK_SIZE(SYSTEM_SERVICE_TABLE, 0x4 + (0x3 * sizeof(PVOID)));
 
 typedef enum _SYSTEM_INFORMATION_CLASS
 {
@@ -170,18 +171,17 @@ typedef enum _SYSTEM_INFORMATION_CLASS
 	SystemRegistryReconciliationInformation = 0x9b,
 	MaxSystemInfoClass = 0x9c,
 } SYSTEM_INFORMATION_CLASS, *PSYSTEM_INFORMATION_CLASS;
-/*
-typedef enum _OBJECT_INFORMATION_CLASS
+
+typedef enum _OBJECT_INFORMATION_CLASS_UNDOC
 {
-	ObjectBasicInformation,
+	// ObjectBasicInformation,
 	ObjectNameInformation,
-	ObjectTypeInformation,
+	// ObjectTypeInformation,
 	ObjectTypesInformation,
 	ObjectHandleFlagInformation,
 	ObjectSessionInformation,
 	MaxObjectInfoClass,
-} OBJECT_INFORMATION_CLASS;
-*/
+} OBJECT_INFORMATION_CLASS_UNDOC;
 
 typedef struct _SYSTEM_MODULE
 {
@@ -220,3 +220,38 @@ typedef struct _SYSTEM_KERNEL_DEBUGGER_INFORMATION_EX
 	BOOLEAN DebuggerPresent;
 } SYSTEM_KERNEL_DEBUGGER_INFORMATION_EX, *PSYSTEM_KERNEL_DEBUGGER_INFORMATION_EX;
 CHECK_SIZE(SYSTEM_KERNEL_DEBUGGER_INFORMATION_EX, 0x3);
+
+typedef struct _OBJECT_TYPE_INFORMATION
+{
+	UNICODE_STRING Name;
+	ULONG TotalNumberOfObjects;
+	ULONG TotalNumberOfHandles;
+	ULONG TotalPagedPoolUsage;
+	ULONG TotalNonPagedPoolUsage;
+	ULONG TotalNamePoolUsage;
+	ULONG TotalHandleTableUsage;
+	ULONG HighWaterNumberOfObjects;
+	ULONG HighWaterNumberOfHandles;
+	ULONG HighWaterPagedPoolUsage;
+	ULONG HighWaterNonPagedPoolUsage;
+	ULONG HighWaterNamePoolUsage;
+	ULONG HighWaterHandleTableUsage;
+	ULONG InvalidAttributes;
+	GENERIC_MAPPING GenericMapping;
+	ULONG ValidAccess;
+	BOOLEAN SecurityRequired;
+	BOOLEAN MaintainHandleCount;
+	USHORT MaintainTypeList;
+	POOL_TYPE PoolType;
+	ULONG PagedPoolUsage;
+	ULONG NonPagedPoolUsage;
+} OBJECT_TYPE_INFORMATION, *POBJECT_TYPE_INFORMATION;
+
+namespace Nt
+{
+	NTSTATUS NTAPI NtReadVirtualMemory(HANDLE ProcessHandle, PVOID BaseAddress, PVOID Buffer, SIZE_T NumberOfBytesToRead, PSIZE_T NumberOfBytesRead);
+	NTSTATUS NTAPI NtClose(HANDLE Handle);
+	NTSTATUS NTAPI NtQuerySystemInformation(SYSTEM_INFORMATION_CLASS SystemInformationClass, PVOID SystemInformation, ULONG SystemInformationLength, PULONG ReturnLength);
+	NTSTATUS NTAPI NtSetInformationThread(HANDLE ThreadHandle, THREADINFOCLASS ThreadInformationClass, PVOID ThreadInformation, ULONG ThreadInformationLength);
+	NTSTATUS NTAPI NtQueryObject(HANDLE Handle, OBJECT_INFORMATION_CLASS ObjectInformationClass, PVOID ObjectInformation, ULONG ObjectInformationLength, PULONG ReturnLength);
+}

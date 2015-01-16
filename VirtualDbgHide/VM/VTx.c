@@ -43,7 +43,7 @@ NTSTATUS VTxHardwareStatus()
 	//
 	if (cpuInfo[0] < 1)
 	{
-		DbgLog("Error: extended CPUID functions not implemented\n");
+		DbgLog("Error: Extended CPUID functions not implemented\n");
 		return STATUS_NOT_SUPPORTED;
 	}
 

@@ -1,17 +1,19 @@
 #include "Driver.h"
 
-ULONG64 NtSyscallHandler;
-ULONG64 GuestSyscallHandler;
+extern "C"
+{
+	ULONG64 NtSyscallHandler;
+	ULONG64 GuestSyscallHandler;
 
-ULONG64 NtKernelBase;
-ULONG64 NtKernelSSDT;
+	ULONG64 NtKernelBase;
+	ULONG64 NtKernelSSDT;
 
-// 1 = Hook, 0 = Disabled
-CHAR SyscallHookEnabled[4096];
-CHAR SyscallParamTable[4096];
-PVOID SyscallPointerTable[4096];
+	CHAR SyscallHookEnabled[4096];
+	CHAR SyscallParamTable[4096];
+	PVOID SyscallPointerTable[4096];
 
-VOID SyscallEntryPoint();
+	VOID SyscallEntryPoint();
+}
 
 NTSTATUS AddNtServiceCallHook(ULONG Index, UCHAR ParameterCount, PVOID Function)
 {
@@ -43,7 +45,6 @@ NTSTATUS RemoveNtServiceCallHook(ULONG Index)
 	return AddNtServiceCallHook(Index, 0, NULL);
 }
 
-extern NTSTATUS(NTAPI * NtQuerySystemInformation)(SYSTEM_INFORMATION_CLASS SystemInformationClass, PVOID SystemInformation, ULONG SystemInformationLength, PULONG ReturnLength);
 VOID QueryNtServiceCall()
 {
 	//
@@ -68,9 +69,9 @@ VOID QueryNtServiceCall()
 	RtlSecureZeroMemory(SyscallParamTable, sizeof(SyscallParamTable));
 	RtlSecureZeroMemory(SyscallPointerTable, sizeof(SyscallPointerTable));
 
-	*(ULONG_PTR *)&NtQuerySystemInformation = NtKernelBase + 0x3D1EA8;
+//	*(ULONG_PTR *)&NtQuerySystemInformation = NtKernelBase + 0x3D1EA8;
 
 	AddNtServiceCallHook(0xE, 1, (PVOID)&hk_NtClose);
 //	AddNtServiceCallHook(0x3E, 5, (PVOID)&hk_NtReadVirtualMemory);
-	AddNtServiceCallHook(0x35, 4, (PVOID)&hk_NtQuerySystemInformation);
+//	AddNtServiceCallHook(0x35, 4, (PVOID)&hk_NtQuerySystemInformation);
 }
