@@ -293,6 +293,8 @@ namespace Nt
 {
 	extern UNICODE_STRING DebugObject;
 
+	NTSTATUS Initialize();
+
 	NTSTATUS NTAPI NtReadVirtualMemory(HANDLE ProcessHandle, PVOID BaseAddress, PVOID Buffer, SIZE_T NumberOfBytesToRead, PSIZE_T NumberOfBytesRead);
 	NTSTATUS NTAPI NtClose(HANDLE Handle);
 	NTSTATUS NTAPI NtQuerySystemInformation(SYSTEM_INFORMATION_CLASS SystemInformationClass, PVOID SystemInformation, ULONG SystemInformationLength, PULONG ReturnLength);

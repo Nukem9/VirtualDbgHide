@@ -190,7 +190,7 @@ NTSTATUS RemoveDebugObjectInfo(PVOID ObjectInformation, ULONG ObjectInformationL
 	//
 	// Validate the size of the base container
 	//
-	if (ObjectInformationLength <= sizeof(OBJECT_ALL_TYPES_INFORMATION))
+	if (ObjectInformationLength <= (sizeof(OBJECT_ALL_TYPES_INFORMATION) + sizeof(OBJECT_TYPE_INFORMATION)))
 		return STATUS_INFO_LENGTH_MISMATCH;
 
 	//
@@ -201,9 +201,6 @@ NTSTATUS RemoveDebugObjectInfo(PVOID ObjectInformation, ULONG ObjectInformationL
 
 	for (ULONG i = 0; i < typesInfo->NumberOfTypes; i++)
 	{
-		USHORT offset	= (typeInfo->Name.MaximumLength + 3) & ~3;
-		PUCHAR nextType = (PUCHAR)(typeInfo->Name.Buffer) + offset;
-
 		//
 		// Should this entry be faked?
 		//
@@ -211,9 +208,11 @@ NTSTATUS RemoveDebugObjectInfo(PVOID ObjectInformation, ULONG ObjectInformationL
 			return STATUS_SUCCESS;
 
 		//
-		// Validate the pointer first
+		// Validate the pointer first (Aligned to 0x4)
 		//
-		if (nextType >= ((PUCHAR)ObjectInformation + ObjectInformationLength))
+		ULONG_PTR nextType = ((ULONG_PTR)typeInfo->Name.Buffer + typeInfo->Name.Length) & 0xFFFFFFFC;
+
+		if (nextType >= ((ULONG_PTR)ObjectInformation + ObjectInformationLength))
 			break;
 
 		//

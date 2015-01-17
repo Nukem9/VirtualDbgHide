@@ -20,7 +20,7 @@ NTSTATUS NTAPI hk_NtReadVirtualMemory(HANDLE ProcessHandle, PVOID BaseAddress, P
 NTSTATUS NTAPI hk_NtClose(HANDLE Handle)
 {
 	PVOID object	= NULL;
-	NTSTATUS status = ObReferenceObjectByHandle(Handle, 0, NULL, UserMode, &object, NULL);
+	NTSTATUS status = ObReferenceObjectByHandle(Handle, 0, NULL, ExGetPreviousMode(), &object, NULL);
 
 	//
 	// This will fail with an invalid handle

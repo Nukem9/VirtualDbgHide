@@ -9,6 +9,24 @@ namespace Nt
 	NTSTATUS (NTAPI * pNtQueryObject)(HANDLE Handle, OBJECT_INFORMATION_CLASS ObjectInformationClass, PVOID ObjectInformation, ULONG ObjectInformationLength, PULONG ReturnLength);
 	NTSTATUS (NTAPI * pNtSystemDebugControl)(DEBUG_CONTROL_CODE ControlCode, PVOID InputBuffer, ULONG InputBufferLength, PVOID OutputBuffer, ULONG OutputBufferLength, PULONG ReturnLength);
 
+	NTSTATUS Initialize()
+	{
+		RtlInitUnicodeString(&DebugObject, L"DebugObject");
+
+		*(ULONG_PTR *)&pNtReadVirtualMemory			= GetSSDTEntry(0);
+		*(ULONG_PTR *)&pNtQuerySystemInformation	= GetSSDTEntry(0);
+		*(ULONG_PTR *)&pNtQueryObject				= GetSSDTEntry(0);
+		*(ULONG_PTR *)&pNtSystemDebugControl		= GetSSDTEntry(0);
+
+		if (!pNtReadVirtualMemory ||
+			!pNtQuerySystemInformation ||
+			!pNtQueryObject ||
+			!pNtSystemDebugControl)
+			return STATUS_UNSUCCESSFUL;
+
+		return STATUS_SUCCESS;
+	}
+
 	NTSTATUS NTAPI NtReadVirtualMemory(HANDLE ProcessHandle, PVOID BaseAddress, PVOID Buffer, SIZE_T NumberOfBytesToRead, PSIZE_T NumberOfBytesRead)
 	{
 		return pNtReadVirtualMemory(ProcessHandle, BaseAddress, Buffer, NumberOfBytesToRead, NumberOfBytesRead);
