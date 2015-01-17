@@ -2,7 +2,7 @@
 
 namespace Nt
 {
-	UNICODE_STRING DebugObject;
+	UNICODE_STRING DebugObjectName;
 
 	NTSTATUS (NTAPI * pNtQueryInformationProcess)(HANDLE ProcessHandle, PROCESSINFOCLASS ProcessInformationClass, PVOID ProcessInformation, ULONG ProcessInformationLength, PULONG ReturnLength);
 	NTSTATUS (NTAPI * pNtQueryObject)(HANDLE Handle, OBJECT_INFORMATION_CLASS ObjectInformationClass, PVOID ObjectInformation, ULONG ObjectInformationLength, PULONG ReturnLength);
@@ -12,7 +12,7 @@ namespace Nt
 
 	NTSTATUS Initialize()
 	{
-		RtlInitUnicodeString(&DebugObject, L"DebugObject");
+		RtlInitUnicodeString(&DebugObjectName, L"DebugObject");
 
 		*(ULONG_PTR *)&pNtQueryInformationProcess	= GetSSDTEntry(0);
 		*(ULONG_PTR *)&pNtQueryObject				= GetSSDTEntry(0);

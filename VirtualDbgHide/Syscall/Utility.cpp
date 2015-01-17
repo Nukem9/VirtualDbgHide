@@ -229,7 +229,7 @@ NTSTATUS RemoveSingleDebugObjectInfo(OBJECT_TYPE_INFORMATION *Information)
 	//
 	// Does the object type information name match "DebugObject"?
 	//
-	if (RtlEqualUnicodeString(&Information->Name, &Nt::DebugObject, FALSE))
+	if (RtlEqualUnicodeString(&Information->Name, &Nt::DebugObjectName, FALSE))
 	{
 		Information->TotalNumberOfObjects = 0;
 		Information->TotalNumberOfHandles = 0;

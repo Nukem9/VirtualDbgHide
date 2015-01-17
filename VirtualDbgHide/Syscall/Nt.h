@@ -291,7 +291,7 @@ typedef struct _OBJECT_ALL_TYPES_INFORMATION
 
 namespace Nt
 {
-	extern UNICODE_STRING DebugObject;
+	extern UNICODE_STRING DebugObjectName;
 
 	NTSTATUS Initialize();
 

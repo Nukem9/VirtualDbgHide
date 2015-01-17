@@ -24,6 +24,14 @@ NTSTATUS AddNtServiceCallHook(ULONG Index, UCHAR ParameterCount, PVOID Function)
 		return STATUS_INVALID_PARAMETER_2;
 
 	//
+	// Ensure this function isn't interrupted
+	//
+	KIRQL irql = KeGetCurrentIrql();
+
+	if (irql < DISPATCH_LEVEL)
+		irql = KeRaiseIrqlToDpcLevel();
+
+	//
 	// If the syscall hook is enabled, disable it immediately
 	//
 	InterlockedExchange8(&SyscallHookEnabled[Index], FALSE);
@@ -36,6 +44,12 @@ NTSTATUS AddNtServiceCallHook(ULONG Index, UCHAR ParameterCount, PVOID Function)
 	//
 	if (Function)
 		InterlockedExchange8(&SyscallHookEnabled[Index], TRUE);
+
+	//
+	// Reset IRQL
+	//
+	if (KeGetCurrentIrql() > irql)
+		KeLowerIrql(irql);
 
 	return STATUS_SUCCESS;
 }
