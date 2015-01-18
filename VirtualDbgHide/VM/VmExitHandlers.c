@@ -31,8 +31,6 @@ NTSTATUS NTAPI HandleCpuid(PVIRT_CPU Cpu, ULONG InstructionLength)
 
 NTSTATUS NTAPI HandleException(PVIRT_CPU Cpu, ULONG InstructionLength)
 {
-	UNREFERENCED_PARAMETER(InstructionLength);
-
 	ULONG32 Event, InjectEvent;
 	ULONG64 ErrorCode, ExitQualification;
 	PINTERRUPT_INFO_FIELD pEvent;
@@ -128,7 +126,7 @@ NTSTATUS NTAPI HandleException(PVIRT_CPU Cpu, ULONG InstructionLength)
 NTSTATUS NTAPI HandleInvd(PVIRT_CPU Cpu, ULONG InstructionLength)
 {
 	//
-	// Invalidate internal caches
+	// Invalidate Internal Caches
 	//
 	__invd();
 
@@ -310,7 +308,7 @@ NTSTATUS NTAPI HandleMsrRead(PVIRT_CPU Cpu, ULONG InstructionLength)
 	case MSR_GS_BASE:			msr.QuadPart = __readvmx(GUEST_GS_BASE);		break;
 	case MSR_FS_BASE:			msr.QuadPart = __readvmx(GUEST_FS_BASE);		break;
 
-	case MSR_LSTAR:				msr.QuadPart = NtSyscallHandler;DbgPrint("LSTAR - 0x%p\n", Cpu->rip);break;
+	case MSR_LSTAR:				msr.QuadPart = NtSyscallHandler;DbgPrint("PG LSTAR - 0x%p\n", Cpu->rip);break;
 
 	default:					msr.QuadPart = __readmsr(ecx);					break;
 	}

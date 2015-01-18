@@ -32,12 +32,14 @@ _StopVirtualization PROC
 	mov rcx, VMCALL_MAGIC_VALUE
 	mov eax, 0FFFFFFFFh
     vmcall
+	int 3
 _StopVirtualization ENDP    
 
 _QueryVirtualization PROC
 	mov rcx, VMCALL_MAGIC_VALUE
 	mov eax, 0h
 	vmcall
+	retn
 _QueryVirtualization ENDP
 
 _GuestEntry PROC

@@ -234,6 +234,10 @@ typedef struct _SYSTEM_MODULE
 } SYSTEM_MODULE, *PSYSTEM_MODULE;
 CHECK_SIZE(SYSTEM_MODULE, 0x128);
 
+// ************************ //
+// NtQuerySystemInformation //
+// ************************ //
+
 #pragma warning(disable:4200)
 typedef struct _SYSTEM_MODULE_INFORMATION
 {
@@ -256,6 +260,10 @@ typedef struct _SYSTEM_KERNEL_DEBUGGER_INFORMATION_EX
 	BOOLEAN DebuggerPresent;
 } SYSTEM_KERNEL_DEBUGGER_INFORMATION_EX, *PSYSTEM_KERNEL_DEBUGGER_INFORMATION_EX;
 CHECK_SIZE(SYSTEM_KERNEL_DEBUGGER_INFORMATION_EX, 0x3);
+
+// ************************ //
+// NtQueryObject            //
+// ************************ //
 
 typedef struct _OBJECT_TYPE_INFORMATION
 {
