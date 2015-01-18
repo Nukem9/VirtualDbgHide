@@ -100,15 +100,14 @@ ULONG_PTR GetSSDTBase()
 
 ULONG_PTR GetSSDTEntry(ULONG TableIndex)
 {
-	ULONG_PTR entry				= 0;
-	PSYSTEM_SERVICE_TABLE ssdt	= (PSYSTEM_SERVICE_TABLE)NtKernelSSDT;
+	PKSERVICE_TABLE_DESCRIPTOR ssdt = (PKSERVICE_TABLE_DESCRIPTOR)NtKernelSSDT;
 
 #ifdef _WIN64
 	// SSDT pointers are relative to the base in X64
-	entry = (ULONG_PTR)ssdt->ServiceTable + ((ULONG_PTR)ssdt->ServiceTable[TableIndex] >> 4);
+	ULONG_PTR entry = (ULONG_PTR)ssdt->ServiceTable + ((ULONG_PTR)ssdt->ServiceTable[TableIndex] >> 4);
 #else
 	// Otherwise it's 32-bit and a direct pointer
-	entry = (ULONG_PTR)ssdt->ServiceTable[TableIndex];
+	ULONG_PTR entry = (ULONG_PTR)ssdt->ServiceTable[TableIndex];
 #endif
 
 	//

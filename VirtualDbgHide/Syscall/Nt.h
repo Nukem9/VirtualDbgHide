@@ -1,14 +1,21 @@
 #pragma once
 
-#define CHECK_SIZE(str, size) static_assert(sizeof(str) == (size), "Invalid " #str " size")
 
-typedef struct _SYSTEM_SERVICE_TABLE
+#ifdef _WIN64
+#define CHECK_SIZE(str, size64, size32) static_assert(sizeof(str) == (size64), "Invalid " #str " size")
+#define CHECK_SIZE_SAME(str, size) CHECK_SIZE(str, size, size)
+#else
+#define CHECK_SIZE(str, size64, size32) static_assert(sizeof(str) == (size32), "Invalid " #str " size")
+#define CHECK_SIZE_SAME(str, size) CHECK_SIZE(str, size, size)
+#endif
+
+typedef struct _KSERVICE_TABLE_DESCRIPTOR
 {
 	PVOID *ServiceTable;
 	PVOID *CounterTable;
 	ULONG ServiceLimit;
 	PUCHAR ArgumentTable;
-} SYSTEM_SERVICE_TABLE, *PSYSTEM_SERVICE_TABLE;
+} KSERVICE_TABLE_DESCRIPTOR, *PKSERVICE_TABLE_DESCRIPTOR;
 //CHECK_SIZE(SYSTEM_SERVICE_TABLE, 0x4 + (0x3 * sizeof(PVOID)));
 
 typedef enum _SYSTEM_INFORMATION_CLASS
@@ -219,6 +226,10 @@ typedef enum _DEBUG_CONTROL_CODE
 	SysDbgSetKdBlockEnable = 31
 } DEBUG_CONTROL_CODE;
 
+// ************************ //
+// NtQuerySystemInformation //
+// ************************ //
+
 typedef struct _SYSTEM_MODULE
 {
 	HANDLE Section;
@@ -232,11 +243,7 @@ typedef struct _SYSTEM_MODULE
 	USHORT OffsetToFileName;
 	UCHAR FullPathName[256];
 } SYSTEM_MODULE, *PSYSTEM_MODULE;
-CHECK_SIZE(SYSTEM_MODULE, 0x128);
-
-// ************************ //
-// NtQuerySystemInformation //
-// ************************ //
+CHECK_SIZE(SYSTEM_MODULE, 0x128, 0x120);
 
 #pragma warning(disable:4200)
 typedef struct _SYSTEM_MODULE_INFORMATION
@@ -244,21 +251,21 @@ typedef struct _SYSTEM_MODULE_INFORMATION
 	ULONG                ModulesCount;
 	SYSTEM_MODULE        Modules[0];
 } SYSTEM_MODULE_INFORMATION, *PSYSTEM_MODULE_INFORMATION;
-CHECK_SIZE(SYSTEM_MODULE_INFORMATION, 0x8);
+CHECK_SIZE(SYSTEM_MODULE_INFORMATION, 0x8, 0x4);
 
 typedef struct _SYSTEM_KERNEL_DEBUGGER_INFORMATION
 {
 	BOOLEAN DebuggerEnabled;
 	BOOLEAN DebuggerNotPresent;
 } SYSTEM_KERNEL_DEBUGGER_INFORMATION, *PSYSTEM_KERNEL_DEBUGGER_INFORMATION;
-CHECK_SIZE(SYSTEM_KERNEL_DEBUGGER_INFORMATION, 0x2);
+CHECK_SIZE_SAME(SYSTEM_KERNEL_DEBUGGER_INFORMATION, 0x2);
 
 typedef struct _SYSTEM_PROCESS_ID_INFORMATION
 {
 	HANDLE ProcessId;
 	UNICODE_STRING ImageName;
 } SYSTEM_PROCESS_ID_INFORMATION, *PSYSTEM_PROCESS_ID_INFORMATION;
-CHECK_SIZE(SYSTEM_PROCESS_ID_INFORMATION, 0x8 + sizeof(UNICODE_STRING));
+CHECK_SIZE(SYSTEM_PROCESS_ID_INFORMATION, 0x8 + sizeof(UNICODE_STRING), 0x4 + sizeof(UNICODE_STRING));
 
 typedef struct _SYSTEM_KERNEL_DEBUGGER_INFORMATION_EX
 {
@@ -266,7 +273,7 @@ typedef struct _SYSTEM_KERNEL_DEBUGGER_INFORMATION_EX
 	BOOLEAN DebuggerEnabled;
 	BOOLEAN DebuggerPresent;
 } SYSTEM_KERNEL_DEBUGGER_INFORMATION_EX, *PSYSTEM_KERNEL_DEBUGGER_INFORMATION_EX;
-CHECK_SIZE(SYSTEM_KERNEL_DEBUGGER_INFORMATION_EX, 0x3);
+CHECK_SIZE_SAME(SYSTEM_KERNEL_DEBUGGER_INFORMATION_EX, 0x3);
 
 // ************************ //
 // NtQueryObject            //
@@ -297,12 +304,14 @@ typedef struct _OBJECT_TYPE_INFORMATION
 	ULONG PagedPoolUsage;
 	ULONG NonPagedPoolUsage;
 } OBJECT_TYPE_INFORMATION, *POBJECT_TYPE_INFORMATION;
+CHECK_SIZE_SAME(OBJECT_TYPE_INFORMATION, 0x58 + sizeof(UNICODE_STRING));
 
 typedef struct _OBJECT_ALL_TYPES_INFORMATION
 {
 	ULONG NumberOfTypes;
 	OBJECT_TYPE_INFORMATION TypeInformation[0];
 } OBJECT_ALL_TYPES_INFORMATION, *POBJECT_ALL_TYPES_INFORMATION;
+CHECK_SIZE(OBJECT_ALL_TYPES_INFORMATION, 0x8, 0x4);
 
 namespace Nt
 {

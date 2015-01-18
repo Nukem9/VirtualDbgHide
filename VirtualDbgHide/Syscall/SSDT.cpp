@@ -108,25 +108,6 @@ NTSTATUS NTAPI hk_NtQuerySystemInformation(SYSTEM_INFORMATION_CLASS SystemInform
 			if (!SystemInformation && ReturnLength && *ReturnLength >= sizeof(SYSTEM_MODULE))
 				*ReturnLength -= sizeof(SYSTEM_MODULE);
 		}
-		else if (SystemInformationClass == SystemProcessIdInformation)
-		{
-			// if (SUCCESS && pid == .......)
-			if (NT_SUCCESS(status) && false)
-			{
-				//
-				// Zero out any possible data that can be leaked
-				//
-				PSYSTEM_PROCESS_ID_INFORMATION pidInfo = (PSYSTEM_PROCESS_ID_INFORMATION)SystemInformation;
-
-				if (pidInfo->ImageName.Length > 0)
-					RtlSecureZeroMemory(pidInfo->ImageName.Buffer, pidInfo->ImageName.Length * sizeof(pidInfo->ImageName.Buffer[0]));
-
-				//
-				// "Invalid PID"
-				//
-				return STATUS_INVALID_PARAMETER;
-			}
-		}
 	}
 
 	//
@@ -146,6 +127,25 @@ NTSTATUS NTAPI hk_NtQuerySystemInformation(SYSTEM_INFORMATION_CLASS SystemInform
 
 			debugInfo->DebuggerEnabled		= FALSE;
 			debugInfo->DebuggerNotPresent	= TRUE;
+		}
+		else if (SystemInformationClass == SystemProcessIdInformation)
+		{
+			// if (SUCCESS && pid == .......)
+			if (false)
+			{
+				//
+				// Zero out any possible data that can be leaked
+				//
+				PSYSTEM_PROCESS_ID_INFORMATION pidInfo = (PSYSTEM_PROCESS_ID_INFORMATION)SystemInformation;
+
+				if (pidInfo->ImageName.Length > 0)
+					RtlSecureZeroMemory(pidInfo->ImageName.Buffer, pidInfo->ImageName.Length * sizeof(pidInfo->ImageName.Buffer[0]));
+
+				//
+				// "Invalid PID"
+				//
+				return STATUS_INVALID_PARAMETER;
+			}
 		}
 		else if (SystemInformationClass == SystemKernelDebuggerInformationEx)
 		{
