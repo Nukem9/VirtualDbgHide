@@ -226,9 +226,56 @@ typedef enum _DEBUG_CONTROL_CODE
 	SysDbgSetKdBlockEnable = 31
 } DEBUG_CONTROL_CODE;
 
+typedef enum _THREAD_STATE
+{
+	StateInitialized,
+	StateReady,
+	StateRunning,
+	StateStandby,
+	StateTerminated,
+	StateWait,
+	StateTransition,
+	StateUnknown
+} THREAD_STATE;
+
 // ************************ //
 // NtQuerySystemInformation //
 // ************************ //
+
+#pragma warning(disable:4200)
+typedef struct _SYSTEM_THREAD
+{
+	LARGE_INTEGER   KernelTime;
+	LARGE_INTEGER   UserTime;
+	LARGE_INTEGER   CreateTime;
+	ULONG           WaitTime;
+	PVOID           StartAddress;
+	CLIENT_ID       ClientId;
+	ULONG           Priority;
+	LONG            BasePriority;
+	ULONG           ContextSwitchCount;
+	THREAD_STATE    State;
+	ULONG           WaitReason;
+} SYSTEM_THREAD, *PSYSTEM_THREAD;
+
+typedef struct _SYSTEM_PROCESS_INFORMATION
+{
+	ULONG           NextEntryOffset;
+	ULONG           NumberOfThreads;
+	LARGE_INTEGER   Reserved[3];
+	LARGE_INTEGER   CreateTime;
+	LARGE_INTEGER   UserTime;
+	LARGE_INTEGER   KernelTime;
+	UNICODE_STRING  ImageName;
+	ULONG           BasePriority;
+	HANDLE          ProcessId;
+	HANDLE          ParentProcessId;
+	ULONG           HandleCount;
+	ULONG           Reserved2[2];
+	VM_COUNTERS     VMCounters;
+	IO_COUNTERS     IOCounters;
+	SYSTEM_THREAD   Threads[0];
+} SYSTEM_PROCESS_INFORMATION, *PSYSTEM_PROCESS_INFORMATION;
 
 typedef struct _SYSTEM_MODULE
 {
@@ -245,7 +292,6 @@ typedef struct _SYSTEM_MODULE
 } SYSTEM_MODULE, *PSYSTEM_MODULE;
 CHECK_SIZE(SYSTEM_MODULE, 0x128, 0x120);
 
-#pragma warning(disable:4200)
 typedef struct _SYSTEM_MODULE_INFORMATION
 {
 	ULONG                ModulesCount;

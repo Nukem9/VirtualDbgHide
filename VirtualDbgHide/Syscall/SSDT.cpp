@@ -93,7 +93,8 @@ NTSTATUS NTAPI hk_NtQuerySystemInformation(SYSTEM_INFORMATION_CLASS SystemInform
 	{
 		if (SystemInformationClass == SystemProcessInformation)
 		{
-
+			if (SystemInformation)
+				RemoveProcessFromSysProcessInfo(SystemInformation, SystemInformationLength);
 		}
 		else if (SystemInformationClass == SystemModuleInformation)
 		{

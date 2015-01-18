@@ -122,6 +122,103 @@ ULONG_PTR GetSSDTEntry(ULONG TableIndex)
 	return entry;
 }
 
+NTSTATUS RemoveProcessFromSysProcessInfo(PVOID SystemInformation, ULONG SystemInformationLength)
+{
+	//
+	// Subtract the size of the base container
+	//
+	if (SystemInformationLength < sizeof(SYSTEM_PROCESS_INFORMATION))
+		return STATUS_INFO_LENGTH_MISMATCH;
+
+	//
+	// Get a pointer to the modules and loop each index
+	//
+	PSYSTEM_PROCESS_INFORMATION moduleInfo = (PSYSTEM_PROCESS_INFORMATION)SystemInformation;
+
+	PSYSTEM_PROCESS_INFORMATION prevPointer = NULL;
+	PSYSTEM_PROCESS_INFORMATION currPointer = NULL;
+	PSYSTEM_PROCESS_INFORMATION nextPointer = NULL;
+
+	for (BOOLEAN breakIteration = FALSE;;)
+	{
+		//
+		// Does this process match?
+		//
+		if (moduleInfo->ProcessId == (HANDLE)0xDEADBEEF)
+		{
+			currPointer		= moduleInfo;
+			breakIteration	= TRUE;
+		}
+
+		//
+		// Validate pointer
+		//
+		if (moduleInfo->NextEntryOffset == 0)
+			break;
+
+		ULONG_PTR nextIndex = (ULONG_PTR)moduleInfo + moduleInfo->NextEntryOffset;
+
+		if (nextIndex >= ((ULONG_PTR)SystemInformation + SystemInformationLength))
+			break;
+
+		//
+		// If this flag was set, get the next pointer in the list and exit
+		//
+		if (breakIteration)
+		{
+			nextPointer = (PSYSTEM_PROCESS_INFORMATION)nextIndex;
+			break;
+		}
+
+		//
+		// Move to next index
+		//
+		prevPointer = moduleInfo;
+		moduleInfo	= (PSYSTEM_PROCESS_INFORMATION)nextIndex;
+	}
+
+	if (!currPointer)
+		return STATUS_NOT_FOUND;
+
+	//
+	// Was there a previous pointer?
+	//
+	if (prevPointer)
+	{
+		//
+		// Link it to the next, or set it to 0
+		//
+		if (nextPointer)
+			prevPointer->NextEntryOffset = (ULONG)((ULONG_PTR)nextPointer - (ULONG_PTR)moduleInfo);
+		else
+			prevPointer->NextEntryOffset = 0;
+	}
+
+	//
+	// Calculate the size of the target entry and zero it
+	//
+	SIZE_T zeroLength = 0;
+
+	if (nextPointer)
+	{
+		//
+		// There was another entry after this, so determine
+		// the delta between them
+		//
+		zeroLength = (ULONG_PTR)currPointer - (ULONG_PTR)nextPointer;
+	}
+	else
+	{
+		//
+		// Data is from 'currPointer' to SystemInformation buffer end
+		//
+		zeroLength = (ULONG_PTR)currPointer - ((ULONG_PTR)SystemInformation + SystemInformationLength);
+	}
+
+	RtlSecureZeroMemory(currPointer, zeroLength);
+	return STATUS_SUCCESS;
+}
+
 NTSTATUS RemoveDriverFromSysModuleInfo(PVOID SystemInformation, ULONG SystemInformationLength, PULONG OutLength)
 {
 	//
@@ -189,7 +286,7 @@ NTSTATUS RemoveDebugObjectInfo(PVOID ObjectInformation, ULONG ObjectInformationL
 	//
 	// Validate the size of the base container
 	//
-	if (ObjectInformationLength <= (sizeof(OBJECT_ALL_TYPES_INFORMATION) + sizeof(OBJECT_TYPE_INFORMATION)))
+	if (ObjectInformationLength < (sizeof(OBJECT_ALL_TYPES_INFORMATION) + sizeof(OBJECT_TYPE_INFORMATION)))
 		return STATUS_INFO_LENGTH_MISMATCH;
 
 	//
