@@ -99,7 +99,7 @@ NTSTATUS NTAPI hk_NtQuerySystemInformation(SYSTEM_INFORMATION_CLASS SystemInform
 		// ALWAYS subtract one SYSTEM_MODULE from the return length
 		// if it is not null and SystemInformation is null
 		// (This driver counts as one module)
-		//	
+		//
 		if (!SystemInformation && ReturnLength && *ReturnLength >= sizeof(SYSTEM_MODULE))
 			*ReturnLength -= sizeof(SYSTEM_MODULE);
 	}

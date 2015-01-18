@@ -33,7 +33,7 @@ SyscallEntryPoint PROC
     cmp         rax, SYSCALL_MAX_INDEX      ; Is the index larger than the array size?
     jge         KiSystemCall64              ;
 
-    lea         rsp, offset SyscallHookEnabled; R11 = &SyscallHookEnabled
+    lea         rsp, offset SyscallHookEnabled; RSP = &SyscallHookEnabled
     cmp         byte ptr [rsp + rax], 0     ; Is hooking enabled for this index?
     jne         KiSystemCall64_Emulate      ; NE = index is hooked
 
@@ -93,12 +93,12 @@ KiSystemCall64_Emulate PROC
     mov         [rbp-38h], r8               ;
     mov         [rbp-30h], r9               ;
 
-	int         3                           ; FIXME (Syscall with debug registers active)
+    int         3                           ; FIXME (Syscall with debug registers active)
     align       10h
 
     KiSS05:
     sti                                     ; enable interrupts
-	mov         [rbx+88h], rcx
+    mov         [rbx+88h], rcx
     mov         [rbx+80h], eax
 
 KiSystemCall64_Emulate ENDP
@@ -120,15 +120,15 @@ KiSystemServiceRepeat_Emulate PROC
     ; R10 = [OUT] function address
     ; R11 = [I/O] trashed
 
-	lea         r11, offset SyscallPointerTable
-	mov         r10, qword ptr [r11 + rax * 8h]
+    lea         r11, offset SyscallPointerTable
+    mov         r10, qword ptr [r11 + rax * 8h]
 
-	lea         r11, offset SyscallParamTable
-	movzx       rax, byte ptr [r11 + rax]   ; RAX = paramter count
+    lea         r11, offset SyscallParamTable
+    movzx       rax, byte ptr [r11 + rax]   ; RAX = paramter count
 
-	mov         r11, qword ptr [NtKernelBase]
-	add         r11, 15F3E0h                ; <------------------ FIXME
-	jmp         r11                         ; R11 = and/jz KiSystemServiceCopyEnd
+    mov         r11, qword ptr [NtKernelBase]
+    add         r11, 15F3E0h                ; <------------------ FIXME
+    jmp         r11                         ; R11 = and/jz KiSystemServiceCopyEnd
 
 KiSystemServiceRepeat_Emulate ENDP
 
