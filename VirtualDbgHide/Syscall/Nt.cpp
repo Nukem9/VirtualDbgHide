@@ -24,7 +24,7 @@ namespace Nt
 		*(ULONG_PTR *)&pNtSetInformationThread		= GetSSDTEntry(0);
 		*(ULONG_PTR *)&pNtSystemDebugControl		= GetSSDTEntry(0);
 
-		if (!pNtClose
+		if (!pNtClose ||
 			!pNtQueryInformationProcess ||
 			!pNtQueryObject ||
 			!pNtQuerySystemInformation ||

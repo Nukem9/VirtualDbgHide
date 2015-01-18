@@ -86,22 +86,47 @@ NTSTATUS NTAPI hk_NtQuerySystemInformation(SYSTEM_INFORMATION_CLASS SystemInform
 	NTSTATUS status = Nt::NtQuerySystemInformation(SystemInformationClass, SystemInformation, SystemInformationLength, ReturnLength);
 
 	//
-	// Special case for SystemModuleInformation (11)
+	// Special cases for driver info and process info
 	// NOTE: Possible STATUS_INFO_LENGTH_MISMATCH (Short write)
 	//
-	if ((SystemInformationClass == SystemModuleInformation) &&
-		(NT_SUCCESS(status) || status == STATUS_INFO_LENGTH_MISMATCH))
+	if (NT_SUCCESS(status) || status == STATUS_INFO_LENGTH_MISMATCH)
 	{
-		if (SystemInformation)
-			RemoveDriverFromSysModuleInfo(SystemInformation, SystemInformationLength, ReturnLength);
+		if (SystemInformationClass == SystemProcessInformation)
+		{
 
-		//
-		// ALWAYS subtract one SYSTEM_MODULE from the return length
-		// if it is not null and SystemInformation is null
-		// (This driver counts as one module)
-		//
-		if (!SystemInformation && ReturnLength && *ReturnLength >= sizeof(SYSTEM_MODULE))
-			*ReturnLength -= sizeof(SYSTEM_MODULE);
+		}
+		else if (SystemInformationClass == SystemModuleInformation)
+		{
+			if (SystemInformation)
+				RemoveDriverFromSysModuleInfo(SystemInformation, SystemInformationLength, ReturnLength);
+
+			//
+			// ALWAYS subtract one SYSTEM_MODULE from the return length
+			// if it is not null and SystemInformation is null
+			// (This driver counts as one module)
+			//
+			if (!SystemInformation && ReturnLength && *ReturnLength >= sizeof(SYSTEM_MODULE))
+				*ReturnLength -= sizeof(SYSTEM_MODULE);
+		}
+		else if (SystemInformationClass == SystemProcessIdInformation)
+		{
+			// if (SUCCESS && pid == .......)
+			if (NT_SUCCESS(status) && false)
+			{
+				//
+				// Zero out any possible data that can be leaked
+				//
+				PSYSTEM_PROCESS_ID_INFORMATION pidInfo = (PSYSTEM_PROCESS_ID_INFORMATION)SystemInformation;
+
+				if (pidInfo->ImageName.Length > 0)
+					RtlSecureZeroMemory(pidInfo->ImageName.Buffer, pidInfo->ImageName.Length * sizeof(pidInfo->ImageName.Buffer[0]));
+
+				//
+				// "Invalid PID"
+				//
+				return STATUS_INVALID_PARAMETER;
+			}
+		}
 	}
 
 	//

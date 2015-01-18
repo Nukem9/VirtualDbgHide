@@ -39,7 +39,7 @@ _QueryVirtualization PROC
 	mov rcx, VMCALL_MAGIC_VALUE
 	mov eax, 0h
 	vmcall
-	retn
+	ret
 _QueryVirtualization ENDP
 
 _GuestEntry PROC
