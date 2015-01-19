@@ -1,5 +1,9 @@
 #include "stdafx.h"
 
+#define SEH_START()		__try {
+#define SEH_END()		}
+#define SEH_EXCEPT()	__except(EXCEPTION_EXECUTE_HANDLER)
+
 //
 // Every function in this file is called from usermode because of
 // SYSCALL/SYSENTER. Zw* functions never reach here.
@@ -38,12 +42,17 @@ NTSTATUS NTAPI hk_NtQueryInformationProcess(HANDLE ProcessHandle, PROCESSINFOCLA
 	//
 	if (ProcessInformation)
 	{
+		SEH_START()
+
 		switch (ProcessInformationClass)
 		{
 		case ProcessDebugPort:			*(PHANDLE)ProcessInformation = 0; break;
 		case ProcessDebugObjectHandle:	*(PHANDLE)ProcessInformation = 0; break;
 		case ProcessDebugFlags:			*(PULONG)ProcessInformation  = 0; break;
 		}
+
+		SEH_END()
+		SEH_EXCEPT(){ status = GetExceptionCode(); }
 	}
 
 	return status;
@@ -60,6 +69,8 @@ NTSTATUS NTAPI hk_NtQueryObject(HANDLE Handle, OBJECT_INFORMATION_CLASS ObjectIn
 	if ((ObjectInformation) &&
 		(NT_SUCCESS(status) || status == STATUS_INFO_LENGTH_MISMATCH))
 	{
+		SEH_START()
+
 		if (ObjectInformationClass == ObjectTypeInformation)
 		{
 			//
@@ -76,6 +87,9 @@ NTSTATUS NTAPI hk_NtQueryObject(HANDLE Handle, OBJECT_INFORMATION_CLASS ObjectIn
 			if (ObjectInformationLength > 0)
 				RemoveDebugObjectInfo(ObjectInformation, ObjectInformationLength);
 		}
+
+		SEH_END()
+		SEH_EXCEPT(){ status = GetExceptionCode(); }
 	}
 
 	return status;
@@ -91,6 +105,8 @@ NTSTATUS NTAPI hk_NtQuerySystemInformation(SYSTEM_INFORMATION_CLASS SystemInform
 	//
 	if (NT_SUCCESS(status) || status == STATUS_INFO_LENGTH_MISMATCH)
 	{
+		SEH_START()
+
 		if (SystemInformationClass == SystemProcessInformation)
 		{
 			if (SystemInformation)
@@ -123,6 +139,9 @@ NTSTATUS NTAPI hk_NtQuerySystemInformation(SYSTEM_INFORMATION_CLASS SystemInform
 					RemoveProcessFromSysProcessInfo(sessInfo->Buffer, sessInfo->BufferLength);
 			}
 		}
+
+		SEH_END()
+		SEH_EXCEPT(){ status = GetExceptionCode(); }
 	}
 
 	//
@@ -136,6 +155,8 @@ NTSTATUS NTAPI hk_NtQuerySystemInformation(SYSTEM_INFORMATION_CLASS SystemInform
 	//
 	if (SystemInformation && SystemInformationLength > 0)
 	{
+		SEH_START()
+
 		if (SystemInformationClass == SystemKernelDebuggerInformation)
 		{
 			PSYSTEM_KERNEL_DEBUGGER_INFORMATION debugInfo = (PSYSTEM_KERNEL_DEBUGGER_INFORMATION)SystemInformation;
@@ -173,6 +194,9 @@ NTSTATUS NTAPI hk_NtQuerySystemInformation(SYSTEM_INFORMATION_CLASS SystemInform
 			debugInfoEx->DebuggerEnabled	= FALSE;
 			debugInfoEx->DebuggerPresent	= FALSE;
 		}
+
+		SEH_END()
+		SEH_EXCEPT(){ status = GetExceptionCode(); }
 	}
 
 	return status;
