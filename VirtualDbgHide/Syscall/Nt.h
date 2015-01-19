@@ -11,9 +11,9 @@
 
 typedef struct _KSERVICE_TABLE_DESCRIPTOR
 {
-	PVOID *ServiceTable;
-	PVOID *CounterTable;
-	ULONG ServiceLimit;
+	LONG   *ServiceTable;
+	PVOID  *CounterTable;
+	ULONG  ServiceLimit;
 	PUCHAR ArgumentTable;
 } KSERVICE_TABLE_DESCRIPTOR, *PKSERVICE_TABLE_DESCRIPTOR;
 //CHECK_SIZE(SYSTEM_SERVICE_TABLE, 0x4 + (0x3 * sizeof(PVOID)));
