@@ -104,7 +104,7 @@ ULONG_PTR GetSSDTEntry(ULONG TableIndex)
 
 #ifdef _WIN64
 	// SSDT pointers are relative to the base in X64
-	ULONG_PTR entry = (ULONG_PTR)ssdt->ServiceTable + ((ULONG_PTR)ssdt->ServiceTable[TableIndex] >> 4);
+	ULONG_PTR entry = (ULONG_PTR)ssdt->ServiceTable + (ssdt->ServiceTable[TableIndex] >> 4);
 #else
 	// Otherwise it's 32-bit and a direct pointer
 	ULONG_PTR entry = (ULONG_PTR)ssdt->ServiceTable[TableIndex];
@@ -122,10 +122,12 @@ ULONG_PTR GetSSDTEntry(ULONG TableIndex)
 	return entry;
 }
 
+#define IS_IN_BOUNDS(var, start, size) (((ULONG_PTR)(var)) < ((ULONG_PTR)start + size))
+
 NTSTATUS RemoveProcessFromSysProcessInfo(PVOID SystemInformation, ULONG SystemInformationLength)
 {
 	//
-	// Subtract the size of the base container
+	// Check the size of the base container
 	//
 	if (SystemInformationLength < sizeof(SYSTEM_PROCESS_INFORMATION))
 		return STATUS_INFO_LENGTH_MISMATCH;
@@ -139,16 +141,13 @@ NTSTATUS RemoveProcessFromSysProcessInfo(PVOID SystemInformation, ULONG SystemIn
 	PSYSTEM_PROCESS_INFORMATION currPointer = NULL;
 	PSYSTEM_PROCESS_INFORMATION nextPointer = NULL;
 
-	for (BOOLEAN breakIteration = FALSE;;)
+	for (;;)
 	{
 		//
 		// Does this process match?
 		//
-		if (moduleInfo->ProcessId == (HANDLE)0xDEADBEEF)
-		{
-			currPointer		= moduleInfo;
-			breakIteration	= TRUE;
-		}
+		if (moduleInfo->ProcessId == (HANDLE)3108)
+			currPointer = moduleInfo;
 
 		//
 		// Validate pointer
@@ -157,14 +156,15 @@ NTSTATUS RemoveProcessFromSysProcessInfo(PVOID SystemInformation, ULONG SystemIn
 			break;
 
 		ULONG_PTR nextIndex = (ULONG_PTR)moduleInfo + moduleInfo->NextEntryOffset;
+		ULONG_PTR maxOffset = (ULONG_PTR)FIELD_OFFSET(SYSTEM_PROCESS_INFORMATION, ParentProcessId);
 
-		if (nextIndex >= ((ULONG_PTR)SystemInformation + SystemInformationLength))
+		if (!IS_IN_BOUNDS(nextIndex + maxOffset, SystemInformation, SystemInformationLength))
 			break;
 
 		//
 		// If this flag was set, get the next pointer in the list and exit
 		//
-		if (breakIteration)
+		if (currPointer)
 		{
 			nextPointer = (PSYSTEM_PROCESS_INFORMATION)nextIndex;
 			break;
@@ -189,7 +189,7 @@ NTSTATUS RemoveProcessFromSysProcessInfo(PVOID SystemInformation, ULONG SystemIn
 		// Link it to the next, or set it to 0
 		//
 		if (nextPointer)
-			prevPointer->NextEntryOffset = (ULONG)((ULONG_PTR)nextPointer - (ULONG_PTR)moduleInfo);
+			prevPointer->NextEntryOffset = (ULONG)((ULONG_PTR)nextPointer - (ULONG_PTR)prevPointer);
 		else
 			prevPointer->NextEntryOffset = 0;
 	}
@@ -205,14 +205,14 @@ NTSTATUS RemoveProcessFromSysProcessInfo(PVOID SystemInformation, ULONG SystemIn
 		// There was another entry after this, so determine
 		// the delta between them
 		//
-		zeroLength = (ULONG_PTR)currPointer - (ULONG_PTR)nextPointer;
+		zeroLength = (ULONG_PTR)nextPointer - (ULONG_PTR)currPointer;
 	}
 	else
 	{
 		//
 		// Data is from 'currPointer' to SystemInformation buffer end
 		//
-		zeroLength = (ULONG_PTR)currPointer - ((ULONG_PTR)SystemInformation + SystemInformationLength);
+		zeroLength = ((ULONG_PTR)SystemInformation + SystemInformationLength) - (ULONG_PTR)currPointer;
 	}
 
 	RtlSecureZeroMemory(currPointer, zeroLength);
