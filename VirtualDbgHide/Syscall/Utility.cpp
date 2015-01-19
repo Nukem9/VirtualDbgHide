@@ -2,8 +2,6 @@
 
 ULONG_PTR GetNtoskrnlBase()
 {
-#define IMAGE_DOS_SIGNATURE 0x5a4d
-
 	//
 	// Scan down from a given symbol’s address.
 	// Align to PAGE_SIZE first.
@@ -13,7 +11,10 @@ ULONG_PTR GetNtoskrnlBase()
 
 	__try
 	{
-		while ((*(USHORT *)addr != IMAGE_DOS_SIGNATURE))
+		//
+		// Check for IMAGE_DOS_SIGNATURE
+		//
+		while ((*(USHORT *)addr != 'ZM'))
 			addr -= PAGE_SIZE;
 
 		return addr;
