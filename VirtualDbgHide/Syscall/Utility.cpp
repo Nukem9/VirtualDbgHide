@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "../Misc/Pe.h"
 
 ULONG_PTR GetNtoskrnlBase()
 {
@@ -7,7 +8,7 @@ ULONG_PTR GetNtoskrnlBase()
 	// Align to PAGE_SIZE first.
 	//
 	ULONG_PTR addr	= (ULONG_PTR)&MmGetSystemRoutineAddress;
-	addr			= (addr & ~0xfff);
+	addr			= (addr & ~(PAGE_SIZE - 1));
 
 	__try
 	{
@@ -123,7 +124,55 @@ ULONG_PTR GetSSDTEntry(ULONG TableIndex)
 	return entry;
 }
 
-#define IS_IN_BOUNDS(var, start, size) (((ULONG_PTR)(var)) < ((ULONG_PTR)start + size))
+NTSTATUS GetSSDTIndex(ULONG_PTR ImageBase, SIZE_T ImageSize, const char *FunctionName, PUINT32 Index)
+{
+	//
+	// First get the exported function in the module
+	//
+	ULONG_PTR function = PeGetExportOffset(ImageBase, ImageSize, FunctionName);
+
+	if (function == PE_ERROR_VALUE)
+		return STATUS_NOT_FOUND;
+
+	//
+	// Trace the assembly
+	// 8B XX XX XX XX		MOV EAX, XXXXXXXX
+	// 0F 05				SYSCALL
+	// 0F 34				SYSENTER
+	// C2/C3				RET(N)
+	//
+	for (PUCHAR i = (PUCHAR)function; i < (PUCHAR)(function + 32); i++)
+	{
+		switch (i[0])
+		{
+		//
+		// MOV EAX -> hit, copy the next 4 bytes
+		//
+		case 0xB8:
+			*Index = (*(UINT32 *)&i[1]);
+			return STATUS_SUCCESS;
+
+		//
+		// SYS* -> error, exit function
+		//
+		case 0x0F:
+			if (i[1] == 0x05 || i[1] == 0x34)
+				return STATUS_NOT_FOUND;
+			continue;
+
+		//
+		// RET(N) -> error, exit function
+		//
+		case 0xC2:
+		case 0xC3:
+			return STATUS_NOT_FOUND;
+		}
+	}
+
+	return STATUS_NOT_FOUND;
+}
+
+#define IS_IN_BOUNDS(var, start, size) (((ULONG_PTR)(var)) < ((ULONG_PTR)start + (size)))
 
 NTSTATUS RemoveProcessFromSysProcessInfo(PVOID SystemInformation, ULONG SystemInformationLength)
 {
@@ -270,7 +319,7 @@ NTSTATUS RemoveDriverFromSysModuleInfo(PVOID SystemInformation, ULONG SystemInfo
 	//
 	// Zero the end to prevent leaking any data
 	//
-	RtlZeroMemory((PUCHAR)SystemInformation + modifiedLength, sizeof(SYSTEM_MODULE));
+	RtlSecureZeroMemory((PUCHAR)SystemInformation + modifiedLength, sizeof(SYSTEM_MODULE));
 
 	//
 	// Fix the output parameter and internal struct counter

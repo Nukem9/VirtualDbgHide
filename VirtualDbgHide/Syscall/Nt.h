@@ -379,6 +379,7 @@ namespace Nt
 	extern UNICODE_STRING DebugObjectName;
 
 	NTSTATUS Initialize();
+	NTSTATUS QuerySyscallIndexes();
 
 	NTSTATUS NTAPI NtClose(HANDLE Handle);
 	NTSTATUS NTAPI NtQueryInformationProcess(HANDLE ProcessHandle, PROCESSINFOCLASS ProcessInformationClass, PVOID ProcessInformation, ULONG ProcessInformationLength, PULONG ReturnLength);

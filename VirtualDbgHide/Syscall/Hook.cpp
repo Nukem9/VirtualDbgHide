@@ -83,9 +83,13 @@ VOID QueryNtServiceCall()
 	RtlSecureZeroMemory(SyscallParamTable, sizeof(SyscallParamTable));
 	RtlSecureZeroMemory(SyscallPointerTable, sizeof(SyscallPointerTable));
 
-//	*(ULONG_PTR *)&NtQuerySystemInformation = NtKernelBase + 0x3D1EA8;
+	//
+	// Init the function pointers
+	//
+	if (!NT_SUCCESS(Nt::Initialize()))
+		return;
 
-	AddNtServiceCallHook(0xE, 1, (PVOID)&hk_NtClose);
-//	AddNtServiceCallHook(0x3E, 5, (PVOID)&hk_NtReadVirtualMemory);
+//	AddNtServiceCallHook(0xE, 1, (PVOID)&hk_NtClose);
+	AddNtServiceCallHook(0x3E, 5, (PVOID)&hk_NtReadVirtualMemory);
 //	AddNtServiceCallHook(0x35, 4, (PVOID)&hk_NtQuerySystemInformation);
 }

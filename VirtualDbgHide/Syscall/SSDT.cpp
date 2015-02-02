@@ -176,7 +176,9 @@ NTSTATUS NTAPI hk_NtQuerySystemInformation(SYSTEM_INFORMATION_CLASS SystemInform
 
 				if (pidInfo->ImageName.Length > 0)
 				{
-					RtlSecureZeroMemory(pidInfo->ImageName.Buffer, pidInfo->ImageName.Length * sizeof(pidInfo->ImageName.Buffer[0]));
+					if (pidInfo->ImageName.Buffer)
+						RtlSecureZeroMemory(pidInfo->ImageName.Buffer, pidInfo->ImageName.Length * sizeof(pidInfo->ImageName.Buffer[0]));
+
 					pidInfo->ImageName.Length = 0;
 				}
 
