@@ -99,7 +99,10 @@ namespace Nt
 		PVOID memory	= ExAllocatePoolWithTag(NonPagedPool, fileSize, 'NTDL');
 
 		if (!memory)
+		{
+			status = STATUS_NO_MEMORY;
 			goto __cleanup;
+		}
 
 		status = ZwReadFile(fileHandle, NULL, NULL, NULL, &ioStatusBlock, memory, fileSize, NULL, NULL);
 
@@ -118,14 +121,12 @@ namespace Nt
 		status |= GetSSDTIndex((ULONG_PTR)memory, fileSize, "NtSetInformationThread", &IdNtSetInformationThread);
 		status |= GetSSDTIndex((ULONG_PTR)memory, fileSize, "NtSystemDebugControl", &IdNtSystemDebugControl);
 
-		return status;
-
 	__cleanup:
 		if (memory)
 			ExFreePoolWithTag(memory, 'NTDL');
 
 		ZwClose(fileHandle);
-		return STATUS_UNSUCCESSFUL;
+		return status;
 	}
 
 	NTSTATUS NTAPI NtClose(HANDLE Handle)
