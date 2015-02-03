@@ -72,14 +72,14 @@ ULONG_PTR PeGetExportOffset(ULONG_PTR FileData, SIZE_T FileSize, const char *Exp
 		addressOfNamesOffset == PE_ERROR_VALUE)
 		return PE_ERROR_VALUE;
 
-	PULONG_PTR addressOfFunctions	= (PULONG_PTR)(FileData + addressOfFunctionsOffset);
+	PULONG addressOfFunctions		= (PULONG)(FileData + addressOfFunctionsOffset);
 	PUSHORT addressOfNameOrdinals	= (PUSHORT)(FileData + addressOfNameOrdinalsOffset);
-	PULONG_PTR addressOfNames		= (PULONG_PTR)(FileData + addressOfNamesOffset);
+	PULONG addressOfNames			= (PULONG)(FileData + addressOfNamesOffset);
 
 	//
 	// Enumerate all exports and look for the function string
 	//
-	for (ULONG_PTR i = 0; i < exportDir->NumberOfNames; i++)
+	for (ULONG i = 0; i < exportDir->NumberOfNames; i++)
 	{
 		ULONG_PTR currentNameOffset = PeRvaToOffset(ntHeaders, addressOfNames[i], FileSize);
 
