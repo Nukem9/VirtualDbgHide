@@ -15,7 +15,7 @@ extern "C"
 	VOID SyscallEntryPoint();
 }
 
-NTSTATUS AddNtServiceCallHook(ULONG Index, UCHAR ParameterCount, PVOID Function)
+NTSTATUS AddServiceCallHook(ULONG Index, UCHAR ParameterCount, PVOID Function)
 {
 	if (Index >= ARRAYSIZE(SyscallHookEnabled))
 		return STATUS_INVALID_PARAMETER_1;
@@ -54,13 +54,21 @@ NTSTATUS AddNtServiceCallHook(ULONG Index, UCHAR ParameterCount, PVOID Function)
 	return STATUS_SUCCESS;
 }
 
-NTSTATUS RemoveNtServiceCallHook(ULONG Index)
+NTSTATUS RemoveServiceCallHook(ULONG Index)
 {
-	return AddNtServiceCallHook(Index, 0, NULL);
+	return AddServiceCallHook(Index, 0, NULL);
 }
 
-VOID QueryNtServiceCall()
+NTSTATUS ServiceCallInitialize()
 {
+	//
+	// Initialize the kernel library
+	//
+	NTSTATUS status = AuxKlibInitialize();
+
+	if (!NT_SUCCESS(status))
+		return status;
+
 	//
 	// Query NTOSKRNL base offsets
 	//
@@ -69,6 +77,9 @@ VOID QueryNtServiceCall()
 
 	DbgLog("NtOSBase: 0x%llx\n", NtKernelBase);
 	DbgLog("NtSSDT: 0x%llx\n", NtKernelSSDT);
+
+	if (!NtKernelBase || !NtKernelSSDT)
+		return STATUS_UNSUCCESSFUL;
 
 	//
 	// System call handler
@@ -86,10 +97,13 @@ VOID QueryNtServiceCall()
 	//
 	// Init the function pointers
 	//
-	if (!NT_SUCCESS(Nt::Initialize()))
-		return;
+	status = Nt::Initialize();
 
-//	AddNtServiceCallHook(0xE, 1, (PVOID)&hk_NtClose);
-	AddNtServiceCallHook(0x3E, 5, (PVOID)&hk_NtReadVirtualMemory);
-//	AddNtServiceCallHook(0x35, 4, (PVOID)&hk_NtQuerySystemInformation);
+	if (!NT_SUCCESS(status))
+		return status;
+
+//	AddServiceCallHook(0xE, 1, (PVOID)&hk_NtClose);
+	AddServiceCallHook(0x3E, 5, (PVOID)&hk_NtReadVirtualMemory);
+//	AddServiceCallHook(0x35, 4, (PVOID)&hk_NtQuerySystemInformation);
+	return STATUS_SUCCESS;
 }

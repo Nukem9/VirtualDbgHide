@@ -1,19 +1,5 @@
 #pragma once
 
-#define SYSCALL_NO_HOOK (-1)
-
-typedef struct _SYSCALL_HOOK_INFO
-{
-	ULONG TargetProcessId;
-
-	USHORT IdNtQueryInformationProcess;
-	USHORT IdNtQueryObject;
-	USHORT IdNtQuerySystemInformation;
-	USHORT IdNtClose;
-	USHORT IdNtSetInformationThread;
-	USHORT IdNtSetContextThread;
-} SYSCALL_HOOK_INFO, * PSYSCALL_HOOK_INFO;
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -27,4 +13,4 @@ extern "C"
 }
 #endif
 
-VOID QueryNtServiceCall();
+NTSTATUS ServiceCallInitialize();

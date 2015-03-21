@@ -200,8 +200,8 @@ VOID CpuSetupVMCS(PVIRT_CPU Cpu, PVOID GuestRsp)
 	//
 	{
 		ULONG ExceptionBitmap = 0;
-		//ExceptionBitmap |= 1 << VECTOR_DEBUG_EXCEPTION;
-		//ExceptionBitmap |= 1 << VECTOR_BREAKPOINT_EXCEPTION;
+		ExceptionBitmap |= 1 << VECTOR_DEBUG_EXCEPTION;
+		ExceptionBitmap |= 1 << VECTOR_BREAKPOINT_EXCEPTION;
 		//ExceptionBitmap |= 1 << VECTOR_INVALID_OPCODE_EXCEPTION;
 		//ExceptionBitmap |= 1 << PAGE_FAULT_EXCEPTION;
 

@@ -28,12 +28,12 @@ NTSTATUS DispatchIoControl(PDEVICE_OBJECT DeviceObject, PIRP Irp)
 			//
 			// Information length check
 			//
-			if (inputLength != sizeof(SYSCALL_HOOK_INFO))
+/*			if (inputLength != sizeof(SYSCALL_HOOK_INFO))
 			{
 				status = STATUS_INFO_LENGTH_MISMATCH;
 				break;
 			}
-
+*/
 			//PSYSCALL_HOOK_INFO info = Irp->AssociatedIrp.SystemBuffer;
 			//UNREFERENCED_PARAMETER(info);
 		}

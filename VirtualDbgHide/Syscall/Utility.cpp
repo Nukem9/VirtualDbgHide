@@ -4,24 +4,52 @@
 ULONG_PTR GetNtoskrnlBase()
 {
 	//
-	// Scan down from a given symbol’s address.
-	// Align to PAGE_SIZE first.
+	// Query the buffer size needed to list all modules
 	//
-	ULONG_PTR addr	= (ULONG_PTR)&MmGetSystemRoutineAddress;
-	addr			= (addr & ~(PAGE_SIZE - 1));
+	ULONG modulesSize	= 0;
+	NTSTATUS status		= AuxKlibQueryModuleInformation(&modulesSize, sizeof(AUX_MODULE_EXTENDED_INFO), NULL);
 
-	__try
-	{
-		//
-		// Check for IMAGE_DOS_SIGNATURE
-		//
-		while ((*(USHORT *)addr != 'ZM'))
-			addr -= PAGE_SIZE;
+	if (!NT_SUCCESS(status) || modulesSize == 0)
+		return 0;
 
-		return addr;
-	}
-	__except (EXCEPTION_EXECUTE_HANDLER)
+	//
+	// Calculate the number of modules.
+	//
+	ULONG numberOfModules = modulesSize / sizeof(AUX_MODULE_EXTENDED_INFO);
+
+	//
+	// Allocate memory to receive data.
+	//
+	PAUX_MODULE_EXTENDED_INFO modules = (PAUX_MODULE_EXTENDED_INFO)ExAllocatePoolWithTag(
+		PagedPool,
+		modulesSize,
+		'KLIB'
+		);
+
+	if (!modules)
+		return 0;
+
+	RtlZeroMemory(modules, modulesSize);
+
+	//
+	// Obtain the module information.
+	//
+	status = AuxKlibQueryModuleInformation(&modulesSize, sizeof(AUX_MODULE_EXTENDED_INFO), modules);
+
+	if (!NT_SUCCESS(status))
+		return 0;
+
+	//
+	// Enumerate all of the entries looking for NTOS*
+	//
+	for (ULONG i = 0; i < numberOfModules; i++)
 	{
+		char *fileName = (char *)&modules[i].FullPathName[modules[i].FileNameOffset];
+
+		if (strstr(fileName, "ntoskrnl") ||
+			strstr(fileName, "ntkrnlmp") ||
+			strstr(fileName, "ntkrnlpa"))
+			return (ULONG_PTR)modules[i].BasicInfo.ImageBase;
 	}
 
 	return 0;

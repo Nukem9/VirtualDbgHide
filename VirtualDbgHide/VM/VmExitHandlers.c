@@ -322,45 +322,45 @@ NTSTATUS NTAPI HandleMsrRead(PVIRT_CPU Cpu, ULONG InstructionLength)
 
 NTSTATUS NTAPI HandleMsrWrite(PVIRT_CPU Cpu, ULONG InstructionLength)
 {
-	LARGE_INTEGER Msr;
-	ULONG ecx = (ULONG)Cpu->rcx;
+	LARGE_INTEGER msr;
 
-	//DbgLog("vmx: HandleMsrWrite(): msr = 0x%x\n", ecx);
-	Msr.LowPart = (ULONG)Cpu->rax;
-	Msr.HighPart = (ULONG)Cpu->rdx;
+	ULONG ecx		= (ULONG)Cpu->rcx;
+	msr.LowPart		= (ULONG)Cpu->rax;
+	msr.HighPart	= (ULONG)Cpu->rdx;
 
 	switch (ecx)
 	{
 	case MSR_IA32_SYSENTER_CS:
 		//__writemsr(MSR_IA32_SYSENTER_CS, Msr.QuadPart);
-		__vmx_vmwrite(GUEST_SYSENTER_CS, Msr.QuadPart);
+		__vmx_vmwrite(GUEST_SYSENTER_CS, msr.QuadPart);
 		break;
 
 	case MSR_IA32_SYSENTER_ESP:
 		//__writemsr(MSR_IA32_SYSENTER_ESP, Msr.QuadPart);
-		__vmx_vmwrite(GUEST_SYSENTER_ESP, Msr.QuadPart);
+		__vmx_vmwrite(GUEST_SYSENTER_ESP, msr.QuadPart);
 		break;
 
 	case MSR_IA32_SYSENTER_EIP:
 		//__writemsr(MSR_IA32_SYSENTER_EIP, Msr.QuadPart);
-		__vmx_vmwrite(GUEST_SYSENTER_EIP, Msr.QuadPart);
+		__vmx_vmwrite(GUEST_SYSENTER_EIP, msr.QuadPart);
 		break;
 
 	case MSR_GS_BASE:
 		//__writemsr(MSR_GS_BASE, Msr.QuadPart);
-		__vmx_vmwrite(GUEST_GS_BASE, Msr.QuadPart);
+		__vmx_vmwrite(GUEST_GS_BASE, msr.QuadPart);
 		break;
 
 	case MSR_FS_BASE:
 		//__writemsr(MSR_FS_BASE, Msr.QuadPart);
-		__vmx_vmwrite(GUEST_FS_BASE, Msr.QuadPart);
+		__vmx_vmwrite(GUEST_FS_BASE, msr.QuadPart);
 		break;
 
 	case MSR_LSTAR:
+		// Ignore all writes
 		break;
 
 	default:
-		__writemsr(ecx, Msr.QuadPart);
+		__writemsr(ecx, msr.QuadPart);
 		break;
 	}
 
