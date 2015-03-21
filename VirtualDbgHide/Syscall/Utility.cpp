@@ -36,23 +36,30 @@ ULONG_PTR GetNtoskrnlBase()
 	//
 	status = AuxKlibQueryModuleInformation(&modulesSize, sizeof(AUX_MODULE_EXTENDED_INFO), modules);
 
-	if (!NT_SUCCESS(status))
-		return 0;
+	//
+	// Test symbol to check in the module range
+	//
+	ULONG_PTR symbolAddress = (ULONG_PTR)&DbgPrint;
 
 	//
 	// Enumerate all of the entries looking for NTOS*
 	//
-	for (ULONG i = 0; i < numberOfModules; i++)
-	{
-		char *fileName = (char *)&modules[i].FullPathName[modules[i].FileNameOffset];
+	ULONG_PTR moduleBase = 0;
 
-		if (strstr(fileName, "ntoskrnl") ||
-			strstr(fileName, "ntkrnlmp") ||
-			strstr(fileName, "ntkrnlpa"))
-			return (ULONG_PTR)modules[i].BasicInfo.ImageBase;
+	if (NT_SUCCESS(status))
+	{
+		for (ULONG i = 0; i < numberOfModules; i++)
+		{
+			ULONG_PTR moduleStart	= (ULONG_PTR)modules[i].BasicInfo.ImageBase;
+			ULONG_PTR moduleEnd		= (ULONG_PTR)moduleStart + modules[i].ImageSize;
+
+			if (symbolAddress >= moduleStart && moduleStart < moduleEnd)
+				moduleBase = moduleStart;
+		}
 	}
 
-	return 0;
+	ExFreePoolWithTag(modules, 'KLIB');
+	return moduleBase;
 }
 
 ULONG_PTR GetSSDTBase()
